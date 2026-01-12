@@ -354,16 +354,16 @@ export default function DashboardLayout() {
           <button
             onClick={() => toggleMenuExpand(item.path)}
             className={cn(
-              "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium outline-none transition-all duration-200",
+              "w-full flex items-center gap-2 px-2 py-[6px] rounded-md text-[13px] font-medium outline-none transition-all duration-150",
               (isActive || isSubItemActive)
-                ? "bg-amber-500 text-black shadow-md border border-amber-600" 
-                : "bg-amber-400 text-black hover:bg-amber-500 border border-amber-500/50 shadow-sm"
+                ? "bg-sidebar-active text-sidebar-foreground" 
+                : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
             )}
           >
-            <item.icon className="flex-shrink-0 w-4 h-4 text-black" />
+            <item.icon className="flex-shrink-0 w-[18px] h-[18px] opacity-80" />
             <span className="truncate flex-1 text-left">{item.label}</span>
             <ChevronDown className={cn(
-              "w-3.5 h-3.5 text-black/60 transition-transform duration-200",
+              "w-3.5 h-3.5 opacity-50 transition-transform duration-200",
               isExpanded && "rotate-180"
             )} />
           </button>
@@ -377,19 +377,19 @@ export default function DashboardLayout() {
                 transition={{ duration: 0.15 }}
                 className="overflow-hidden"
               >
-                <div className="ml-3.5 mt-0.5 space-y-0.5 border-l border-amber-500/50 pl-2">
+                <div className="ml-5 mt-0.5 space-y-0.5">
                   {/* Main item link */}
                   <Link
                     to={item.path}
                     className={cn(
-                      "flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[13px] transition-all duration-200",
+                      "flex items-center gap-2 px-2 py-[5px] rounded-md text-[13px] transition-all duration-150",
                       isActive 
-                        ? "bg-amber-500 text-black font-medium shadow-md border border-amber-600" 
-                        : "bg-amber-400/80 text-black hover:bg-amber-500 border border-amber-500/40 shadow-sm"
+                        ? "bg-sidebar-active text-sidebar-foreground font-medium" 
+                        : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
                     )}
                     onMouseEnter={() => prefetchRoute(item.path)}
                   >
-                    <Package className="w-3.5 h-3.5 text-black" />
+                    <Package className="w-4 h-4 opacity-70" />
                     <span>Produtos</span>
                   </Link>
                   
@@ -401,14 +401,14 @@ export default function DashboardLayout() {
                         key={subItem.path}
                         to={subItem.path}
                         className={cn(
-                          "flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[13px] transition-all duration-200",
+                          "flex items-center gap-2 px-2 py-[5px] rounded-md text-[13px] transition-all duration-150",
                           isSubActive 
-                            ? "bg-amber-500 text-black font-medium shadow-md border border-amber-600" 
-                            : "bg-amber-400/80 text-black hover:bg-amber-500 border border-amber-500/40 shadow-sm"
+                            ? "bg-sidebar-active text-sidebar-foreground font-medium" 
+                            : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
                         )}
                         onMouseEnter={() => prefetchRoute(subItem.path)}
                       >
-                        <subItem.icon className="w-3.5 h-3.5 text-black" />
+                        <subItem.icon className="w-4 h-4 opacity-70" />
                         <span>{subItem.label}</span>
                       </Link>
                     );
@@ -426,10 +426,10 @@ export default function DashboardLayout() {
         to={item.path}
         onClick={handleClick}
         className={cn(
-          "ripple-container flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] font-medium outline-none transition-all duration-200 relative",
+          "flex items-center gap-2 px-2 py-[6px] rounded-md text-[13px] font-medium outline-none transition-all duration-150 relative",
           isActive 
-            ? "bg-amber-500 text-black shadow-md border border-amber-600" 
-            : "bg-amber-400 text-black hover:bg-amber-500 border border-amber-500/50 shadow-sm",
+            ? "bg-sidebar-active text-sidebar-foreground" 
+            : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground",
           sidebarCollapsed && "justify-center px-2"
         )}
         onMouseEnter={() => prefetchRoute(item.path)}
@@ -437,9 +437,8 @@ export default function DashboardLayout() {
       >
         <div className="relative">
           <item.icon className={cn(
-            "flex-shrink-0 text-black",
-            sidebarCollapsed ? "w-[18px] h-[18px]" : "w-4 h-4",
-            sidebarCollapsed ? "w-[18px] h-[18px]" : "w-4 h-4",
+            "flex-shrink-0 opacity-80",
+            sidebarCollapsed ? "w-[18px] h-[18px]" : "w-[18px] h-[18px]",
             sidebarCollapsed && animatingIcon === item.path && "animate-icon-spin"
           )} />
           {/* Badge for pending orders */}
@@ -448,8 +447,8 @@ export default function DashboardLayout() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               className={cn(
-                "absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center",
-                "bg-red-600 text-white text-[10px] font-bold rounded-full px-1",
+                "absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] flex items-center justify-center",
+                "bg-red-500 text-white text-[9px] font-bold rounded-full px-0.5",
                 sidebarCollapsed && "-top-1 -right-1"
               )}
             >
@@ -499,23 +498,23 @@ export default function DashboardLayout() {
         <motion.aside 
           layout
           initial={false}
-          animate={{ width: sidebarCollapsed ? 56 : 208 }}
+          animate={{ width: sidebarCollapsed ? 56 : 220 }}
           transition={{ 
-            duration: 0.25, 
+            duration: 0.2, 
             ease: [0.25, 0.1, 0.25, 1] 
           }}
           className={cn(
             "hidden md:flex flex-col h-screen flex-shrink-0 relative group/sidebar",
-            "bg-gray-800 border-r border-amber-400/50"
+            "bg-[hsl(var(--sidebar-bg))]/80 backdrop-blur-xl border-r border-[hsl(var(--sidebar-border))]"
           )}
         >
           {/* Collapse Toggle Button */}
           <button
             onClick={toggleSidebar}
             className={cn(
-              "absolute -right-2.5 top-14 z-50 flex h-5 w-5 items-center justify-center",
-              "rounded-full bg-amber-400 border border-amber-500 shadow-md",
-              "text-gray-900 hover:bg-amber-300",
+              "absolute -right-3 top-14 z-50 flex h-6 w-6 items-center justify-center",
+              "rounded-full bg-card border border-border shadow-sm",
+              "text-muted-foreground hover:text-foreground hover:bg-muted",
               "transition-all duration-150 opacity-0 group-hover/sidebar:opacity-100",
               "focus:opacity-100 focus:outline-none"
             )}
@@ -525,17 +524,17 @@ export default function DashboardLayout() {
               animate={{ rotate: sidebarCollapsed ? 0 : 180 }}
               transition={{ duration: 0.2 }}
             >
-              <ChevronRight className="w-3 h-3" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </motion.div>
           </button>
 
           {/* Logo - Compact */}
           <div 
             className={cn(
-              "h-12 flex items-center flex-shrink-0 overflow-hidden",
+              "h-[52px] flex items-center flex-shrink-0 overflow-hidden",
               "transition-all duration-200",
               sidebarCollapsed ? "justify-center px-2" : "px-3",
-              "border-b border-amber-400/30"
+              "border-b border-[hsl(var(--sidebar-border))]"
             )}
           >
             <Link to="/dashboard" className="flex items-center gap-2.5 min-w-0">
@@ -548,11 +547,11 @@ export default function DashboardLayout() {
                   <img 
                     src={store.logo_url} 
                     alt={store.name} 
-                    className="w-8 h-8 rounded-md object-cover"
+                    className="w-8 h-8 rounded-lg object-cover shadow-sm"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-lg bg-amber-400 flex items-center justify-center shadow-sm">
-                    <span className="text-gray-900 font-bold text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm">
+                    <span className="text-white font-semibold text-sm">
                       {store?.name?.charAt(0) || "A"}
                     </span>
                   </div>
@@ -560,15 +559,20 @@ export default function DashboardLayout() {
               </motion.div>
               <AnimatePresence mode="wait">
                 {!sidebarCollapsed && (
-                  <motion.span
+                  <motion.div
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -8 }}
                     transition={{ duration: 0.15 }}
-                    className="font-bold text-[13px] text-white truncate"
+                    className="flex flex-col min-w-0"
                   >
-                    {store?.name || "Anotô?"}
-                  </motion.span>
+                    <span className="font-semibold text-[13px] text-sidebar-foreground truncate">
+                      {store?.name || "Anotô?"}
+                    </span>
+                    <span className="text-[10px] text-sidebar-foreground-muted truncate">
+                      Painel de Controle
+                    </span>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </Link>
@@ -581,36 +585,34 @@ export default function DashboardLayout() {
                 onClick={() => {
                   if (!store) return;
                   if (store.is_open_override) {
-                    // Show confirmation before closing
                     setShowCloseStoreDialog(true);
                   } else {
-                    // Open immediately
                     handleToggleStoreStatus(true);
                   }
                 }}
                 className={cn(
-                  "flex items-center gap-2 w-full transition-colors",
-                  sidebarCollapsed ? "justify-center p-1.5" : "px-3 py-1.5",
+                  "flex items-center gap-2 w-full transition-all duration-150 rounded-md mx-2 my-1",
+                  sidebarCollapsed ? "justify-center p-1.5 mx-1" : "px-2 py-1.5",
+                  sidebarCollapsed ? "w-auto" : "w-[calc(100%-16px)]",
                   store?.is_open_override 
-                    ? "bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-900/30 dark:hover:bg-emerald-800/40"
-                    : "bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/40"
+                    ? "bg-emerald-500/10 hover:bg-emerald-500/20 dark:bg-emerald-500/15 dark:hover:bg-emerald-500/25"
+                    : "bg-red-500/10 hover:bg-red-500/20 dark:bg-red-500/15 dark:hover:bg-red-500/25"
                 )}
               >
                 <motion.div
                   animate={{ 
-                    scale: store?.is_open_override ? [1, 1.3, 1] : 1,
-                    opacity: store?.is_open_override ? [1, 0.6, 1] : 1
+                    scale: store?.is_open_override ? [1, 1.2, 1] : 1,
                   }}
                   transition={{ 
-                    duration: 1.5, 
+                    duration: 2, 
                     repeat: store?.is_open_override ? Infinity : 0, 
                     ease: "easeInOut"
                   }}
                   className={cn(
-                    "w-2.5 h-2.5 rounded-full flex-shrink-0",
+                    "w-2 h-2 rounded-full flex-shrink-0",
                     store?.is_open_override 
-                      ? "bg-green-600 shadow-[0_0_8px_2px_rgba(34,197,94,0.6)]" 
-                      : "bg-red-600 shadow-[0_0_6px_2px_rgba(239,68,68,0.5)]"
+                      ? "bg-emerald-500" 
+                      : "bg-red-500"
                   )}
                 />
                 <AnimatePresence mode="wait">
@@ -621,7 +623,7 @@ export default function DashboardLayout() {
                       exit={{ opacity: 0 }}
                       className={cn(
                         "text-[11px] font-medium",
-                        store?.is_open_override ? "text-emerald-700 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
+                        store?.is_open_override ? "text-emerald-600 dark:text-emerald-400" : "text-red-500 dark:text-red-400"
                       )}
                     >
                       {store?.is_open_override ? "Loja Aberta" : "Loja Fechada"}
@@ -632,7 +634,7 @@ export default function DashboardLayout() {
             </TooltipTrigger>
             {sidebarCollapsed && (
               <TooltipContent side="right" className="text-xs font-medium">
-                {store?.is_open_override ? "Loja Aberta - Clique para fechar" : "Loja Fechada - Clique para abrir"}
+                {store?.is_open_override ? "Loja Aberta" : "Loja Fechada"}
               </TooltipContent>
             )}
           </Tooltip>
@@ -658,7 +660,7 @@ export default function DashboardLayout() {
           </AlertDialog>
 
           {/* Menu - Scrollable */}
-          <nav className="flex-1 p-1.5 space-y-0.5 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <nav className="flex-1 px-2 py-2 space-y-0.5 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {menuItems.map(item => (
               <NavItem key={item.path} item={item} />
             ))}
@@ -667,9 +669,9 @@ export default function DashboardLayout() {
           {/* Footer - Fixed Bottom */}
           <div 
             className={cn(
-              "p-1.5 space-y-0.5 flex-shrink-0 overflow-hidden",
-              sidebarCollapsed && "flex flex-col items-center",
-              "border-t border-amber-400/30"
+              "px-2 py-2 space-y-0.5 flex-shrink-0 overflow-hidden",
+              sidebarCollapsed && "flex flex-col items-center px-1",
+              "border-t border-[hsl(var(--sidebar-border))]"
             )}
           >
             {/* Theme Toggle */}
@@ -693,11 +695,11 @@ export default function DashboardLayout() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className={cn(
-                      "flex items-center gap-2 text-xs text-gray-300 hover:text-amber-400 transition-colors rounded-lg hover:bg-gray-700/50",
-                      sidebarCollapsed ? "p-1.5 justify-center" : "px-2.5 py-1.5"
+                      "flex items-center gap-2 text-[13px] text-sidebar-foreground-muted hover:text-sidebar-foreground transition-all duration-150 rounded-md hover:bg-sidebar-hover",
+                      sidebarCollapsed ? "p-1.5 justify-center" : "px-2 py-[6px]"
                     )}
                   >
-                    <ExternalLink className="w-3.5 h-3.5 flex-shrink-0 text-amber-400/70" />
+                    <ExternalLink className="w-[18px] h-[18px] flex-shrink-0 opacity-70" />
                     <AnimatePresence mode="wait">
                       {!sidebarCollapsed && (
                         <motion.span
@@ -723,11 +725,11 @@ export default function DashboardLayout() {
                 <button
                   onClick={handleLogout}
                   className={cn(
-                    "flex items-center gap-2 text-xs text-gray-300 hover:text-red-400 transition-colors w-full rounded-lg hover:bg-red-900/30",
-                    sidebarCollapsed ? "p-1.5 justify-center" : "px-2.5 py-1.5"
+                    "flex items-center gap-2 text-[13px] text-sidebar-foreground-muted hover:text-red-500 transition-all duration-150 w-full rounded-md hover:bg-red-500/10",
+                    sidebarCollapsed ? "p-1.5 justify-center" : "px-2 py-[6px]"
                   )}
                 >
-                  <LogOut className="w-3.5 h-3.5 flex-shrink-0 text-gray-400" />
+                  <LogOut className="w-[18px] h-[18px] flex-shrink-0 opacity-70" />
                   <AnimatePresence mode="wait">
                     {!sidebarCollapsed && (
                       <motion.span
