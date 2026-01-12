@@ -30,6 +30,7 @@ import { getMenuThemeClasses, getCustomColorStyles, MENU_THEMES } from "@/compon
 import { preloadDashboardRoutes } from "@/hooks/useRoutePreloader";
 import { useStockNotifications } from "@/hooks/useStockNotifications";
 import { usePendingOrdersCount } from "@/hooks/usePendingOrdersCount";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 
 interface Store {
   id: string;
@@ -117,6 +118,9 @@ export default function DashboardLayout() {
 
   // Pending orders count - realtime updates
   const pendingOrdersCount = usePendingOrdersCount(store?.id ?? null);
+  
+  // Haptic feedback
+  const { impactLight, selectionChanged } = useHapticFeedback();
 
   const sidebarTheme = useMemo(() => {
     const themeId = store?.sidebar_color || "amber";
@@ -800,7 +804,10 @@ export default function DashboardLayout() {
                 return (
                   <button
                     key={item.path}
-                    onClick={() => setSidebarOpen(true)}
+                    onClick={() => {
+                      impactLight();
+                      setSidebarOpen(true);
+                    }}
                     className={cn(
                       "flex flex-col items-center justify-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-150 min-w-[60px]",
                       isActive 
@@ -818,6 +825,7 @@ export default function DashboardLayout() {
                 <Link
                   key={item.path}
                   to={item.path}
+                  onClick={() => selectionChanged()}
                   className={cn(
                     "flex flex-col items-center justify-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-150 min-w-[60px] relative",
                     isActive 
@@ -895,7 +903,10 @@ export default function DashboardLayout() {
                         <Link
                           key={item.path}
                           to={item.path}
-                          onClick={() => setSidebarOpen(false)}
+                          onClick={() => {
+                            selectionChanged();
+                            setSidebarOpen(false);
+                          }}
                           className={cn(
                             "flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl transition-all duration-150",
                             isActive 
