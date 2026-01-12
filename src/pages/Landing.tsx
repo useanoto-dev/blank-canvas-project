@@ -20,7 +20,7 @@ import LoginModal from "@/components/LoginModal";
 
 // URLs externas das imagens
 const anotoLogoFull = "https://felipedublin.com/wp-content/uploads/2026/01/anoto-logo-full.webp";
-import anotoMascotHero from "@/assets/anoto-mascot.avif";
+import anotoMascotHero from "@/assets/anoto-mascot.png";
 
 // Cores fixas da landing (não usa CSS variables para não ser afetada pelo dark mode)
 const COLORS = {
