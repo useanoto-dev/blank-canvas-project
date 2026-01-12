@@ -20,7 +20,7 @@ import LoginModal from "@/components/LoginModal";
 
 // URLs externas das imagens
 const anotoLogoFull = "https://felipedublin.com/wp-content/uploads/2026/01/anoto-logo-full.webp";
-import anotoMascotMoto from "@/assets/anoto-mascot-moto.png";
+import anotoMascotHero from "@/assets/anoto-mascot.avif";
 
 // Cores fixas da landing (não usa CSS variables para não ser afetada pelo dark mode)
 const COLORS = {
@@ -681,8 +681,8 @@ export default function Landing() {
               
               {/* Mascot */}
               <motion.img
-                src={anotoMascotMoto}
-                alt="Mascote Anotô na Moto"
+                src={anotoMascotHero}
+                alt="Mascote Anotô"
                 className="w-80 h-80 object-contain relative z-10"
                 animate={{ 
                   y: [0, -8, 0],
@@ -1201,7 +1201,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <img src={anotoMascotMoto} alt="Anotô" className="w-10 h-10 object-contain" />
+              <img src={anotoMascotHero} alt="Anotô" className="w-10 h-10 object-contain" />
               <div>
                 <span className="font-bold text-lg">Anotô</span>
                 <p className="text-xs" style={{ color: COLORS.mutedForeground }}>Pediu, chegou!</p>
