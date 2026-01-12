@@ -1,0 +1,31 @@
+project_id = "wxiyjvtqgvbvcscbxxnq"
+
+[functions.printnode]
+verify_jwt = false
+
+[functions.uazapi]
+verify_jwt = false
+
+[functions.whatsapp_create_instance_if_needed]
+verify_jwt = false
+
+[functions.whatsapp_connect_instance]
+verify_jwt = false
+
+[functions.whatsapp_get_status_and_qrcode]
+verify_jwt = false
+
+[functions.whatsapp_reset_instance_restaurante]
+verify_jwt = false
+
+[functions.whatsapp_disconnect_instance]
+verify_jwt = false
+
+[functions.atualizar_status_pedido]
+verify_jwt = false
+
+[functions.robo_whatsapp_status_pedido]
+verify_jwt = false
+
+[functions.whatsapp_broadcast]
+verify_jwt = false
