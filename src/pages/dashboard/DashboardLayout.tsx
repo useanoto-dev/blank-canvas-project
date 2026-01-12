@@ -426,7 +426,7 @@ export default function DashboardLayout() {
         to={item.path}
         onClick={handleClick}
         className={cn(
-          "ripple-container flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium outline-none transition-all duration-200 relative",
+          "ripple-container flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] font-medium outline-none transition-all duration-200 relative",
           isActive 
             ? "bg-amber-500 text-black shadow-md border border-amber-600" 
             : "bg-amber-400 text-black hover:bg-amber-500 border border-amber-500/50 shadow-sm",
