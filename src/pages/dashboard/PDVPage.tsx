@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import { 
-  Plus, Minus, Check, X, Tag, Printer, DoorOpen
+  Plus, Minus, Check, X, Tag, Printer, DoorOpen, Maximize2, Minimize2, ArrowLeft
 } from "lucide-react";
 import { PDVLoyaltyRedemption } from "@/components/pdv/PDVLoyaltyRedemption";
 import { PDVPaymentSection } from "@/components/pdv/PDVPaymentSection";
@@ -44,9 +44,15 @@ import {
 } from "@/services/PrintService";
 import { usePDVData, Table, getItemPrice, formatOccupationTime } from "@/hooks/usePDVData";
 import { usePDVCart } from "@/hooks/usePDVCart";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function PDVPage() {
   const { store } = useOutletContext<{ store: any }>();
+  const navigate = useNavigate();
+  
+  // Fullscreen mode state
+  const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Use extracted hooks
   const {
@@ -116,6 +122,33 @@ export default function PDVPage() {
   useEffect(() => {
     const interval = setInterval(() => {}, 60000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Fullscreen toggle
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch(() => {
+        // Fallback for browsers that don't support fullscreen
+        setIsFullscreen(true);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+      }).catch(() => {
+        setIsFullscreen(false);
+      });
+    }
+  }, []);
+
+  // Listen for fullscreen changes
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
   const selectTable = async (table: Table) => {
@@ -572,7 +605,68 @@ export default function PDVPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex gap-4 p-4">
+    <motion.div 
+      layout
+      className={cn(
+        "flex gap-3 transition-all duration-300 relative",
+        isFullscreen 
+          ? "fixed inset-0 z-50 bg-background p-3 pt-14" 
+          : "h-[calc(100vh-4rem)] p-4"
+      )}
+    >
+      {/* Fullscreen Header */}
+      <AnimatePresence>
+        {isFullscreen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-3 left-3 right-3 flex items-center justify-between z-10"
+          >
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                  }
+                  setIsFullscreen(false);
+                }}
+                className="h-9 gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Voltar
+              </Button>
+              <div className="h-6 w-px bg-border" />
+              <span className="text-sm font-medium text-muted-foreground">PDV - Modo Tela Cheia</span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleFullscreen}
+              className="h-9 gap-2"
+            >
+              <Minimize2 className="w-4 h-4" />
+              Sair
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Fullscreen Toggle Button (when not fullscreen) */}
+      {!isFullscreen && (
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={toggleFullscreen}
+          className="absolute top-4 right-4 z-10 h-9 w-9 bg-background/80 backdrop-blur-sm"
+          title="Modo Tela Cheia (ideal para tablets)"
+        >
+          <Maximize2 className="w-4 h-4" />
+        </Button>
+      )}
+
       {/* Left Panel - Tables */}
       <PDVTablesPanel
         tables={tables}
@@ -1011,6 +1105,6 @@ export default function PDVPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </motion.div>
   );
 }
