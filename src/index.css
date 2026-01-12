@@ -74,7 +74,7 @@
     --sidebar-active: 45 90% 88%;
     --sidebar-foreground: 30 10% 20%;
     --sidebar-foreground-muted: 30 8% 45%;
-    --sidebar-accent: 211 100% 50%;
+    --sidebar-accent: 45 100% 50%;
     
     /* Admin specific - Uses primary sparingly */
     --admin-accent: 43 96% 50%;
@@ -135,7 +135,7 @@
     --sidebar-active: 30 25% 18%;
     --sidebar-foreground: 45 20% 92%;
     --sidebar-foreground-muted: 45 10% 60%;
-    --sidebar-accent: 211 100% 60%;
+    --sidebar-accent: 45 100% 55%;
     
     /* Admin specific - Green accent in dark */
     --admin-accent: 152 80% 50%;

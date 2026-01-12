@@ -365,7 +365,7 @@ export default function DashboardLayout() {
             className={cn(
               "w-full flex items-center gap-2.5 px-2.5 py-[7px] rounded-md text-[13px] font-medium outline-none transition-all duration-150 relative",
               (isActive || isSubItemActive)
-                ? "bg-sidebar-active text-sidebar-foreground before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-5 before:bg-blue-500 before:rounded-full" 
+                ? "bg-sidebar-active text-sidebar-foreground before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-5 before:bg-amber-500 before:rounded-full" 
                 : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
             )}
           >
@@ -393,7 +393,7 @@ export default function DashboardLayout() {
                     className={cn(
                       "flex items-center gap-2 px-2.5 py-[6px] rounded-md text-[13px] transition-all duration-150 relative",
                       isActive 
-                        ? "bg-sidebar-active text-sidebar-foreground font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-4 before:bg-blue-500 before:rounded-full" 
+                        ? "bg-sidebar-active text-sidebar-foreground font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-4 before:bg-amber-500 before:rounded-full" 
                         : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
                     )}
                     onMouseEnter={() => prefetchRoute(item.path)}
@@ -412,7 +412,7 @@ export default function DashboardLayout() {
                         className={cn(
                           "flex items-center gap-2 px-2.5 py-[6px] rounded-md text-[13px] transition-all duration-150 relative",
                           isSubActive 
-                            ? "bg-sidebar-active text-sidebar-foreground font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-4 before:bg-blue-500 before:rounded-full" 
+                            ? "bg-sidebar-active text-sidebar-foreground font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-4 before:bg-amber-500 before:rounded-full" 
                             : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground"
                         )}
                         onMouseEnter={() => prefetchRoute(subItem.path)}
@@ -437,7 +437,7 @@ export default function DashboardLayout() {
         className={cn(
           "flex items-center gap-2.5 px-2.5 py-[7px] rounded-md text-[13px] font-medium outline-none transition-all duration-150 relative",
           isActive 
-            ? "bg-sidebar-active text-sidebar-foreground before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-5 before:bg-blue-500 before:rounded-full" 
+            ? "bg-sidebar-active text-sidebar-foreground before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-[3px] before:h-5 before:bg-amber-500 before:rounded-full" 
             : "text-sidebar-foreground-muted hover:bg-sidebar-hover hover:text-sidebar-foreground",
           sidebarCollapsed && "justify-center px-2 before:hidden"
         )}
@@ -449,7 +449,7 @@ export default function DashboardLayout() {
             "flex-shrink-0",
             sidebarCollapsed ? "w-5 h-5" : "w-[18px] h-[18px]",
             sidebarCollapsed && animatingIcon === item.path && "animate-icon-spin",
-            isActive && sidebarCollapsed && "text-blue-500"
+            isActive && sidebarCollapsed && "text-amber-500"
           )} />
           {/* Badge for pending orders */}
           {item.path === "/dashboard/orders" && pendingOrdersCount > 0 && (
@@ -762,6 +762,33 @@ export default function DashboardLayout() {
 
         {/* Mobile Bottom Navigation */}
         <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[hsl(var(--sidebar-bg))] border-t border-[hsl(var(--sidebar-border))] safe-bottom">
+          {/* Store Status Indicator */}
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+            <button
+              onClick={() => {
+                if (!store) return;
+                if (store.is_open_override) {
+                  setShowCloseStoreDialog(true);
+                } else {
+                  handleToggleStoreStatus(true);
+                }
+              }}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium shadow-lg transition-all",
+                store?.is_open_override 
+                  ? "bg-emerald-500 text-white" 
+                  : "bg-red-500 text-white"
+              )}
+            >
+              <motion.div
+                animate={{ scale: store?.is_open_override ? [1, 1.3, 1] : 1 }}
+                transition={{ duration: 1.5, repeat: store?.is_open_override ? Infinity : 0 }}
+                className="w-1.5 h-1.5 rounded-full bg-white"
+              />
+              {store?.is_open_override ? "Aberta" : "Fechada"}
+            </button>
+          </div>
+          
           <div className="flex items-center justify-around h-16 px-1">
             {mobileNavItems.map((item) => {
               const isActive = item.path === "more" 
@@ -777,7 +804,7 @@ export default function DashboardLayout() {
                     className={cn(
                       "flex flex-col items-center justify-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-150 min-w-[60px]",
                       isActive 
-                        ? "text-blue-500" 
+                        ? "text-amber-500" 
                         : "text-sidebar-foreground-muted"
                     )}
                   >
@@ -794,7 +821,7 @@ export default function DashboardLayout() {
                   className={cn(
                     "flex flex-col items-center justify-center gap-0.5 py-1.5 px-3 rounded-xl transition-all duration-150 min-w-[60px] relative",
                     isActive 
-                      ? "text-blue-500 bg-blue-500/10" 
+                      ? "text-amber-500 bg-amber-500/10" 
                       : "text-sidebar-foreground-muted"
                   )}
                 >
@@ -872,7 +899,7 @@ export default function DashboardLayout() {
                           className={cn(
                             "flex flex-col items-center justify-center gap-1.5 p-3 rounded-xl transition-all duration-150",
                             isActive 
-                              ? "bg-blue-500/10 text-blue-500" 
+                              ? "bg-amber-500/15 text-amber-600 dark:text-amber-400" 
                               : "text-sidebar-foreground-muted hover:bg-sidebar-hover"
                           )}
                         >
@@ -939,8 +966,16 @@ export default function DashboardLayout() {
               </div>
             )}
 
-            {/* Page Content */}
-            <Outlet context={{ store, subscription, refreshStore: checkAuth }} />
+            {/* Page Content with Transition */}
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              <Outlet context={{ store, subscription, refreshStore: checkAuth }} />
+            </motion.div>
           </div>
         </main>
       </div>
