@@ -132,21 +132,20 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
         {/* Logo */}
         <div className="p-4 border-b border-[hsl(var(--sidebar-border))]">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-800 to-amber-900 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md dark:from-amber-900 dark:to-amber-950">
               <Pizza className="w-5 h-5 text-white" />
             </div>
             {!collapsed && (
               <div>
-                <h2 className={`font-bold text-sm ${isDark ? 'text-foreground' : 'text-gray-900'}`}>Pizzaria</h2>
-                <p className={`text-xs ${isDark ? 'text-muted-foreground' : 'text-gray-500'}`}>Portuguesa</p>
+                <h2 className="font-bold text-sm text-gray-900 dark:text-amber-950">Pizzaria</h2>
+                <p className="text-xs text-gray-500 dark:text-amber-900/80">Portuguesa</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Acesso Rápido - PDV */}
         <SidebarGroup>
-          <SidebarGroupLabel className={isDark ? 'text-muted-foreground' : 'text-gray-500'}>
+          <SidebarGroupLabel className="text-gray-500 dark:text-amber-900/80">
             Acesso Rápido
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -156,12 +155,8 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                        isDark 
-                          ? 'text-muted-foreground hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground' 
-                          : 'text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900'
-                      }`}
-                      activeClassName="bg-[hsl(var(--sidebar-active))] text-primary font-semibold shadow-sm"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900 dark:text-amber-950/80 dark:hover:bg-amber-500/30 dark:hover:text-amber-950"
+                      activeClassName="bg-[hsl(var(--sidebar-active))] text-amber-950 font-semibold shadow-sm dark:bg-amber-500/40 dark:text-amber-950"
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
@@ -173,9 +168,8 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Operacional */}
         <SidebarGroup>
-          <SidebarGroupLabel className={isDark ? 'text-muted-foreground' : 'text-gray-500'}>
+          <SidebarGroupLabel className="text-gray-500 dark:text-amber-900/80">
             Operacional
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -185,12 +179,8 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                        isDark 
-                          ? 'text-muted-foreground hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground' 
-                          : 'text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900'
-                      }`}
-                      activeClassName="bg-[hsl(var(--sidebar-active))] text-primary font-semibold shadow-sm"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900 dark:text-amber-950/80 dark:hover:bg-amber-500/30 dark:hover:text-amber-950"
+                      activeClassName="bg-[hsl(var(--sidebar-active))] text-amber-950 font-semibold shadow-sm dark:bg-amber-500/40 dark:text-amber-950"
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
@@ -202,9 +192,8 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Gestão */}
         <SidebarGroup>
-          <SidebarGroupLabel className={isDark ? 'text-muted-foreground' : 'text-gray-500'}>
+          <SidebarGroupLabel className="text-gray-500 dark:text-amber-900/80">
             Gestão
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -216,12 +205,8 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
                     <NavLink
                       to={item.url}
                       end={item.url === "/dashboard"}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                        isDark 
-                          ? 'text-muted-foreground hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground' 
-                          : 'text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900'
-                      }`}
-                      activeClassName="bg-[hsl(var(--sidebar-active))] text-primary font-semibold shadow-sm"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900 dark:text-amber-950/80 dark:hover:bg-amber-500/30 dark:hover:text-amber-950"
+                      activeClassName="bg-[hsl(var(--sidebar-active))] text-amber-950 font-semibold shadow-sm dark:bg-amber-500/40 dark:text-amber-950"
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
@@ -238,10 +223,8 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
                       className={cn(
                         "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 w-full",
                         isMenuManagerActive
-                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
-                          : isDark 
-                            ? 'text-muted-foreground hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground' 
-                            : 'text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900'
+                          ? "bg-amber-500/40 text-amber-950 font-semibold shadow-sm"
+                          : "text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900 dark:text-amber-950/80 dark:hover:bg-amber-500/30 dark:hover:text-amber-950"
                       )}
                     >
                       <Menu className="w-5 h-5 flex-shrink-0" />
@@ -264,13 +247,8 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
                         <NavLink
                           key={subItem.url}
                           to={subItem.url}
-                          className={cn(
-                            "flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200",
-                            isDark 
-                              ? 'text-muted-foreground hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground' 
-                              : 'text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900'
-                          )}
-                          activeClassName="bg-[hsl(var(--sidebar-active))] text-primary font-semibold"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900 dark:text-amber-950/80 dark:hover:bg-amber-500/30 dark:hover:text-amber-950"
+                          activeClassName="bg-amber-500/40 text-amber-950 font-semibold"
                         >
                           <subItem.icon className="w-4 h-4 flex-shrink-0" />
                           <span>{subItem.title}</span>
@@ -281,18 +259,13 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
                 </Collapsible>
               </SidebarMenuItem>
 
-              {/* Rest of management items */}
               {managementItems.slice(2).map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
-                        isDark 
-                          ? 'text-muted-foreground hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground' 
-                          : 'text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900'
-                      }`}
-                      activeClassName="bg-[hsl(var(--sidebar-active))] text-primary font-semibold shadow-sm"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900 dark:text-amber-950/80 dark:hover:bg-amber-500/30 dark:hover:text-amber-950"
+                      activeClassName="bg-[hsl(var(--sidebar-active))] text-amber-950 font-semibold shadow-sm dark:bg-amber-500/40 dark:text-amber-950"
                     >
                       <item.icon className="w-5 h-5 flex-shrink-0" />
                       {!collapsed && <span>{item.title}</span>}
@@ -310,11 +283,7 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
           {storeSlug && (
             <button
               onClick={() => window.open(`/cardapio/${storeSlug}`, '_blank')}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                isDark 
-                  ? 'text-muted-foreground hover:bg-[hsl(var(--sidebar-hover))] hover:text-foreground' 
-                  : 'text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900'
-              }`}
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm text-gray-600 hover:bg-[hsl(var(--sidebar-hover))] hover:text-gray-900 dark:text-amber-950/80 dark:hover:bg-amber-500/30 dark:hover:text-amber-950"
             >
               <ExternalLink className="w-4 h-4" />
               {!collapsed && <span>Ver Cardápio</span>}
@@ -322,15 +291,15 @@ export default function AdminSidebar({ isDark = false }: AdminSidebarProps) {
           )}
           <button
             onClick={handleSignOut}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-500 hover:bg-red-500/10 transition-colors text-sm"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-red-600 hover:bg-red-500/10 transition-colors text-sm dark:text-red-900 dark:hover:bg-red-900/20"
           >
             <LogOut className="w-4 h-4" />
             {!collapsed && <span>Sair</span>}
           </button>
         </div>
         {!collapsed && user && (
-          <div className={`mt-4 pt-4 border-t border-[hsl(var(--sidebar-border))]`}>
-            <p className={`text-xs truncate ${isDark ? 'text-muted-foreground' : 'text-gray-500'}`}>{user.email}</p>
+          <div className="mt-4 pt-4 border-t border-[hsl(var(--sidebar-border))]">
+            <p className="text-xs truncate text-gray-500 dark:text-amber-900/80">{user.email}</p>
           </div>
         )}
       </SidebarFooter>
