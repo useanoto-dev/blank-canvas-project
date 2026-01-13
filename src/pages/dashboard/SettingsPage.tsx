@@ -169,7 +169,7 @@ export default function SettingsPage() {
       { key: 'delivery_fee', label: 'Taxa de Entrega' },
       { key: 'min_order_value', label: 'Pedido Mínimo' }
     ],
-    contato: [
+    perfil: [
       { key: 'phone', label: 'Telefone' },
       { key: 'whatsapp', label: 'WhatsApp' },
       { key: 'instagram', label: 'Instagram' },
@@ -187,7 +187,7 @@ export default function SettingsPage() {
     geral: ['name'],
     operacao: [],
     delivery: [],
-    contato: [],
+    perfil: [],
     personalizar: []
   }), []);
 
@@ -238,7 +238,7 @@ export default function SettingsPage() {
     geral: getTabStatus('geral'),
     operacao: getTabStatus('operacao'),
     delivery: getTabStatus('delivery'),
-    contato: getTabStatus('contato'),
+    perfil: getTabStatus('perfil'),
     personalizar: getTabStatus('personalizar')
   }), [getTabStatus]);
 
@@ -732,27 +732,6 @@ export default function SettingsPage() {
               )}
             </Tooltip>
 
-            {/* Tab Contato */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <TabsTrigger value="contato" className="text-[10px] h-7 data-[state=active]:bg-background relative">
-                  <Phone className="w-3 h-3 mr-1" />
-                  Contato
-                  {tabStatuses.contato.hasErrors && (
-                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-destructive rounded-full animate-pulse" />
-                  )}
-                  {!tabStatuses.contato.hasErrors && tabStatuses.contato.incompleteCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-warning rounded-full" />
-                  )}
-                </TabsTrigger>
-              </TooltipTrigger>
-              {getTabTooltip('contato') && (
-                <TooltipContent side="bottom" className="text-[10px] max-w-[200px]">
-                  <div className="space-y-0.5 whitespace-pre-line">{getTabTooltip('contato')}</div>
-                </TooltipContent>
-              )}
-            </Tooltip>
-
             {/* Tab Personalizar */}
             <Tooltip>
               <TooltipTrigger asChild>
@@ -787,8 +766,19 @@ export default function SettingsPage() {
                 <TabsTrigger value="perfil" className="text-[10px] h-7 data-[state=active]:bg-background relative">
                   <User className="w-3 h-3 mr-1" />
                   Perfil
+                  {tabStatuses.perfil.hasErrors && (
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-destructive rounded-full animate-pulse" />
+                  )}
+                  {!tabStatuses.perfil.hasErrors && tabStatuses.perfil.incompleteCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-warning rounded-full" />
+                  )}
                 </TabsTrigger>
               </TooltipTrigger>
+              {getTabTooltip('perfil') && (
+                <TooltipContent side="bottom" className="text-[10px] max-w-[200px]">
+                  <div className="space-y-0.5 whitespace-pre-line">{getTabTooltip('perfil')}</div>
+                </TooltipContent>
+              )}
             </Tooltip>
           </TabsList>
         </TooltipProvider>
@@ -1269,109 +1259,6 @@ export default function SettingsPage() {
           <PaymentMethodsManager storeId={settings.id} />
         </TabsContent>
 
-        {/* TAB: Contato */}
-        <TabsContent value="contato" className="mt-3 space-y-3">
-          {/* Dados Básicos */}
-          <Card>
-            <CardHeader className="pb-2 pt-3 px-3">
-              <CardTitle className="text-xs font-medium flex items-center gap-1.5">
-                <Store className="w-3 h-3" />
-                Dados do Restaurante
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 px-3 pb-3">
-              <div className="space-y-1">
-                <Label className="text-[9px]">Nome</Label>
-                <Input
-                  value={settings.name}
-                  onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-                  className="h-6 text-[9px]"
-                  placeholder="Meu Restaurante"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label className="text-[9px]">Telefone</Label>
-                  <MaskedInput
-                    value={settings.phone}
-                    onValueChange={(raw) => setSettings({ ...settings, phone: raw })}
-                    maskType="phone"
-                    className="h-6 text-[9px]"
-                    showSuccessState={false}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-[9px]">WhatsApp</Label>
-                  <MaskedInput
-                    value={settings.whatsapp}
-                    onValueChange={(raw) => setSettings({ ...settings, whatsapp: raw })}
-                    maskType="whatsapp"
-                    className="h-6 text-[9px]"
-                    showSuccessState={false}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <Label className="text-[9px]">Instagram</Label>
-                  <Input
-                    value={settings.instagram}
-                    onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
-                    className="h-6 text-[9px]"
-                    placeholder="@meurestaurante"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <Label className="text-[9px]">Chave PIX</Label>
-                  <Input
-                    value={settings.pix_key}
-                    onChange={(e) => setSettings({ ...settings, pix_key: e.target.value })}
-                    className="h-6 text-[9px]"
-                    placeholder="CPF, CNPJ, e-mail ou chave"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Localização */}
-          <Card>
-            <CardHeader className="pb-2 pt-3 px-3">
-              <CardTitle className="text-xs font-medium flex items-center gap-1.5">
-                <MapPin className="w-3 h-3" />
-                Localização
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 px-3 pb-3">
-              <div className="space-y-1">
-                <Label className="text-[9px]">Endereço</Label>
-                <Textarea
-                  value={settings.address}
-                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                  className="text-[9px] min-h-[40px]"
-                  placeholder="Rua, número - Bairro"
-                  rows={2}
-                />
-              </div>
-
-              <div className="space-y-1">
-                <Label className="text-[9px]">Link Google Maps</Label>
-                <Input
-                  value={settings.google_maps_link}
-                  onChange={(e) => setSettings({ ...settings, google_maps_link: e.target.value })}
-                  className="h-6 text-[9px]"
-                  placeholder="https://maps.google.com/..."
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-        </TabsContent>
-
         {/* TAB: Personalizar */}
         <TabsContent value="personalizar" className="mt-3 space-y-3">
           {/* Animação Fluida das Categorias */}
@@ -1534,6 +1421,95 @@ export default function SettingsPage() {
                   value={profile?.email || ""}
                   disabled
                   className="h-6 text-[9px] bg-muted"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Dados do Restaurante / Contato */}
+          <Card>
+            <CardHeader className="pb-2 pt-3 px-3">
+              <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                <Phone className="w-3 h-3" />
+                Contato do Estabelecimento
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 px-3 pb-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-[9px]">Telefone</Label>
+                  <MaskedInput
+                    value={settings.phone}
+                    onValueChange={(raw) => setSettings({ ...settings, phone: raw })}
+                    maskType="phone"
+                    className="h-6 text-[9px]"
+                    showSuccessState={false}
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-[9px]">WhatsApp</Label>
+                  <MaskedInput
+                    value={settings.whatsapp}
+                    onValueChange={(raw) => setSettings({ ...settings, whatsapp: raw })}
+                    maskType="whatsapp"
+                    className="h-6 text-[9px]"
+                    showSuccessState={false}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-1">
+                  <Label className="text-[9px]">Instagram</Label>
+                  <Input
+                    value={settings.instagram}
+                    onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
+                    className="h-6 text-[9px]"
+                    placeholder="@meurestaurante"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <Label className="text-[9px]">Chave PIX</Label>
+                  <Input
+                    value={settings.pix_key}
+                    onChange={(e) => setSettings({ ...settings, pix_key: e.target.value })}
+                    className="h-6 text-[9px]"
+                    placeholder="CPF, CNPJ, e-mail ou chave"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Localização */}
+          <Card>
+            <CardHeader className="pb-2 pt-3 px-3">
+              <CardTitle className="text-xs font-medium flex items-center gap-1.5">
+                <MapPin className="w-3 h-3" />
+                Localização
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 px-3 pb-3">
+              <div className="space-y-1">
+                <Label className="text-[9px]">Endereço</Label>
+                <Textarea
+                  value={settings.address}
+                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+                  className="text-[9px] min-h-[40px]"
+                  placeholder="Rua, número - Bairro, Cidade - Estado"
+                  rows={2}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label className="text-[9px]">Link Google Maps</Label>
+                <Input
+                  value={settings.google_maps_link}
+                  onChange={(e) => setSettings({ ...settings, google_maps_link: e.target.value })}
+                  className="h-6 text-[9px]"
+                  placeholder="https://maps.google.com/..."
                 />
               </div>
             </CardContent>
