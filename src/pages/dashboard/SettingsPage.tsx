@@ -150,19 +150,22 @@ export default function SettingsPage() {
   // User profile editing state
   const [editingProfile, setEditingProfile] = useState(false);
   const [editedFullName, setEditedFullName] = useState("");
-  const [editedEmail, setEditedEmail] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
 
   // Initialize edited values when profile loads
   useEffect(() => {
     if (profile) {
       setEditedFullName(profile.full_name || "");
-      setEditedEmail(profile.email || "");
     }
   }, [profile]);
 
   const handleSaveProfile = async () => {
     if (!profile) return;
+    
+    if (editedFullName.trim().length < 2) {
+      toast.error("Nome deve ter pelo menos 2 caracteres");
+      return;
+    }
     
     setSavingProfile(true);
     try {
@@ -170,20 +173,10 @@ export default function SettingsPage() {
       if (editedFullName !== profile.full_name) {
         const { error: profileError } = await supabase
           .from("profiles")
-          .update({ full_name: editedFullName })
+          .update({ full_name: editedFullName.trim() })
           .eq("id", profile.id);
         
         if (profileError) throw profileError;
-      }
-
-      // Update email in auth if changed
-      if (editedEmail !== profile.email) {
-        const { error: emailError } = await supabase.auth.updateUser({
-          email: editedEmail
-        });
-        
-        if (emailError) throw emailError;
-        toast.info("Um email de confirmação foi enviado para o novo endereço");
       }
 
       toast.success("Perfil atualizado com sucesso!");
@@ -1457,188 +1450,276 @@ export default function SettingsPage() {
         </TabsContent>
 
         {/* TAB: Perfil */}
-        <TabsContent value="perfil" className="mt-4 space-y-4">
-          {/* Informações do Usuário */}
-          <Card>
-            <CardHeader className="pb-3 pt-4 px-4">
+        <TabsContent value="perfil" className="mt-4 space-y-6">
+          {/* Informações Pessoais */}
+          <Card className="border-border/50">
+            <CardHeader className="pb-4 pt-5 px-5">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  Minha Conta
-                </CardTitle>
+                <div>
+                  <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                    <User className="w-4 h-4 text-primary" />
+                    Informações Pessoais
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Seus dados de acesso à plataforma
+                  </p>
+                </div>
                 {!editingProfile ? (
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    className="h-7 text-xs"
+                    className="h-8 text-xs gap-1.5"
                     onClick={() => setEditingProfile(true)}
                   >
-                    <Pencil className="w-3 h-3 mr-1" />
+                    <Pencil className="w-3.5 h-3.5" />
                     Editar
                   </Button>
                 ) : (
-                  <div className="flex gap-1">
+                  <div className="flex gap-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-7 text-xs"
+                      className="h-8 text-xs gap-1.5"
                       onClick={() => {
                         setEditingProfile(false);
                         setEditedFullName(profile?.full_name || "");
-                        setEditedEmail(profile?.email || "");
                       }}
                       disabled={savingProfile}
                     >
-                      <X className="w-3 h-3 mr-1" />
+                      <X className="w-3.5 h-3.5" />
                       Cancelar
                     </Button>
                     <Button
                       size="sm"
-                      className="h-7 text-xs"
+                      className="h-8 text-xs gap-1.5"
                       onClick={handleSaveProfile}
-                      disabled={savingProfile}
+                      disabled={savingProfile || !editedFullName.trim()}
                     >
                       {savingProfile ? (
-                        <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
                       ) : (
-                        <Check className="w-3 h-3 mr-1" />
+                        <Check className="w-3.5 h-3.5" />
                       )}
                       Salvar
                     </Button>
                   </div>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Gerencie suas informações pessoais
-              </p>
             </CardHeader>
-            <CardContent className="space-y-4 px-4 pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="space-y-5 px-5 pb-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {/* Nome Completo */}
                 <div className="space-y-2">
-                  <Label className="text-xs font-medium flex items-center gap-1.5">
-                    <User className="w-3 h-3 text-muted-foreground" />
+                  <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                    <User className="w-3.5 h-3.5 text-muted-foreground" />
                     Nome Completo
                   </Label>
-                  <Input
-                    value={editingProfile ? editedFullName : (profile?.full_name || "")}
-                    onChange={(e) => setEditedFullName(e.target.value)}
-                    disabled={!editingProfile}
-                    className={`h-9 text-sm ${!editingProfile ? 'bg-muted/50 text-gray-900' : 'text-gray-900'}`}
-                    placeholder="Seu nome completo"
-                  />
+                  <div className="relative">
+                    <Input
+                      value={editingProfile ? editedFullName : (profile?.full_name || "")}
+                      onChange={(e) => setEditedFullName(e.target.value)}
+                      disabled={!editingProfile}
+                      className={`h-10 text-sm transition-all ${
+                        !editingProfile 
+                          ? 'bg-muted/30 text-foreground border-transparent cursor-not-allowed' 
+                          : editedFullName.trim().length >= 2
+                            ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
+                            : editedFullName.trim().length > 0
+                              ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                              : 'border-input'
+                      }`}
+                      placeholder="Seu nome completo"
+                    />
+                    {editingProfile && editedFullName.trim().length > 0 && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        {editedFullName.trim().length >= 2 ? (
+                          <Check className="w-4 h-4 text-green-500" />
+                        ) : (
+                          <X className="w-4 h-4 text-red-500" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {editingProfile && editedFullName.trim().length > 0 && editedFullName.trim().length < 2 && (
+                    <p className="text-[10px] text-red-500">Nome deve ter pelo menos 2 caracteres</p>
+                  )}
                 </div>
+
+                {/* Email - Read Only */}
                 <div className="space-y-2">
-                  <Label className="text-xs font-medium flex items-center gap-1.5">
-                    <Mail className="w-3 h-3 text-muted-foreground" />
+                  <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                    <Mail className="w-3.5 h-3.5 text-muted-foreground" />
                     Email
                   </Label>
-                  <Input
-                    type="email"
-                    value={editingProfile ? editedEmail : (profile?.email || "")}
-                    onChange={(e) => setEditedEmail(e.target.value)}
-                    disabled={!editingProfile}
-                    className={`h-9 text-sm ${!editingProfile ? 'bg-muted/50 text-gray-900' : 'text-gray-900'}`}
-                    placeholder="seu@email.com"
-                  />
-                  {editingProfile && editedEmail !== profile?.email && (
-                    <p className="text-[10px] text-amber-600">
-                      ⚠️ Alterar o email requer confirmação no novo endereço
-                    </p>
-                  )}
+                  <div className="relative">
+                    <Input
+                      type="email"
+                      value={profile?.email || ""}
+                      disabled
+                      className="h-10 text-sm bg-muted/30 text-foreground border-transparent cursor-not-allowed"
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+                    </div>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">
+                    Email não pode ser alterado por segurança
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Dados do Restaurante / Contato */}
-          <Card>
-            <CardHeader className="pb-3 pt-4 px-4">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Phone className="w-4 h-4" />
-                Contato do Estabelecimento
+          {/* Dados do Estabelecimento */}
+          <Card className="border-border/50">
+            <CardHeader className="pb-4 pt-5 px-5">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Store className="w-4 h-4 text-primary" />
+                Dados do Estabelecimento
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1">
-                Informações de contato exibidas para seus clientes
+                Informações do seu negócio exibidas aos clientes
               </p>
             </CardHeader>
-            <CardContent className="space-y-4 px-4 pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-xs font-medium">Telefone</Label>
-                  <MaskedInput
-                    value={settings.phone}
-                    onValueChange={(raw) => setSettings({ ...settings, phone: raw })}
-                    maskType="phone"
-                    className="h-9 text-sm text-gray-900"
-                    showSuccessState={false}
+            <CardContent className="space-y-5 px-5 pb-5">
+              {/* Nome do Estabelecimento */}
+              <div className="space-y-2">
+                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                  <Store className="w-3.5 h-3.5 text-muted-foreground" />
+                  Nome do Estabelecimento
+                </Label>
+                <div className="relative">
+                  <Input
+                    value={settings.name}
+                    onChange={(e) => {
+                      setSettings({ ...settings, name: e.target.value });
+                      markTouched('name');
+                    }}
+                    onBlur={() => markTouched('name')}
+                    className={`h-10 text-sm transition-all ${
+                      touched.name && settings.name.trim().length >= 2
+                        ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
+                        : touched.name && settings.name.trim().length > 0
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                          : 'border-input'
+                    }`}
+                    placeholder="Nome do seu estabelecimento"
                   />
+                  {touched.name && settings.name.trim().length > 0 && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {settings.name.trim().length >= 2 ? (
+                        <Check className="w-4 h-4 text-green-500" />
+                      ) : (
+                        <X className="w-4 h-4 text-red-500" />
+                      )}
+                    </div>
+                  )}
                 </div>
-
-                <div className="space-y-2">
-                  <Label className="text-xs font-medium">WhatsApp</Label>
-                  <MaskedInput
-                    value={settings.whatsapp}
-                    onValueChange={(raw) => setSettings({ ...settings, whatsapp: raw })}
-                    maskType="whatsapp"
-                    className="h-9 text-sm text-gray-900"
-                    showSuccessState={false}
-                  />
-                </div>
+                {touched.name && settings.name.trim().length > 0 && settings.name.trim().length < 2 && (
+                  <p className="text-[10px] text-red-500">Nome deve ter pelo menos 2 caracteres</p>
+                )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Contato */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <Label className="text-xs font-medium">Instagram</Label>
+                  <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                    <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+                    Celular / WhatsApp
+                  </Label>
+                  <MaskedInput
+                    value={settings.whatsapp || settings.phone}
+                    onValueChange={(raw) => {
+                      setSettings({ ...settings, whatsapp: raw, phone: raw });
+                      markTouched('whatsapp');
+                    }}
+                    onBlur={() => markTouched('whatsapp')}
+                    maskType="whatsapp"
+                    className="h-10 text-sm"
+                    showSuccessState
+                    touched={touched.whatsapp}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                    Instagram
+                  </Label>
                   <Input
                     value={settings.instagram}
                     onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
-                    className="h-9 text-sm text-gray-900"
+                    className="h-10 text-sm"
                     placeholder="@seurestaurante"
                   />
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label className="text-xs font-medium">Chave PIX</Label>
-                  <Input
-                    value={settings.pix_key}
-                    onChange={(e) => setSettings({ ...settings, pix_key: e.target.value })}
-                    className="h-9 text-sm text-gray-900"
-                    placeholder="CPF, CNPJ, e-mail ou chave aleatória"
-                  />
-                </div>
+              {/* PIX */}
+              <div className="space-y-2">
+                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                  <QrCode className="w-3.5 h-3.5 text-muted-foreground" />
+                  Chave PIX
+                </Label>
+                <Input
+                  value={settings.pix_key}
+                  onChange={(e) => setSettings({ ...settings, pix_key: e.target.value })}
+                  className="h-10 text-sm"
+                  placeholder="CPF, CNPJ, e-mail ou chave aleatória"
+                />
+                <p className="text-[10px] text-muted-foreground">
+                  Será exibida para clientes que escolherem pagamento via PIX
+                </p>
               </div>
             </CardContent>
           </Card>
 
-          {/* Localização */}
-          <Card>
-            <CardHeader className="pb-3 pt-4 px-4">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                Localização
+          {/* Endereço */}
+          <Card className="border-border/50">
+            <CardHeader className="pb-4 pt-5 px-5">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-primary" />
+                Endereço
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1">
-                Endereço do seu estabelecimento
+                Localização do seu estabelecimento
               </p>
             </CardHeader>
-            <CardContent className="space-y-4 px-4 pb-4">
+            <CardContent className="space-y-5 px-5 pb-5">
               <div className="space-y-2">
-                <Label className="text-xs font-medium">Endereço Completo</Label>
+                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                  Endereço Completo
+                </Label>
                 <Textarea
                   value={settings.address}
-                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                  className="text-sm min-h-[60px] text-gray-900"
-                  placeholder="Rua, número - Bairro, Cidade - Estado"
+                  onChange={(e) => {
+                    setSettings({ ...settings, address: e.target.value });
+                    markTouched('address');
+                  }}
+                  onBlur={() => markTouched('address')}
+                  className={`text-sm min-h-[80px] resize-none transition-all ${
+                    touched.address && settings.address.trim().length >= 10
+                      ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
+                      : touched.address && settings.address.trim().length > 0
+                        ? 'border-amber-500 focus:border-amber-500 focus:ring-amber-500/20'
+                        : 'border-input'
+                  }`}
+                  placeholder="Rua, número, bairro - Cidade/Estado"
                   rows={2}
                 />
+                <p className="text-[10px] text-muted-foreground">
+                  Exemplo: Rua das Flores, 123 - Centro, São Paulo/SP
+                </p>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-xs font-medium">Link Google Maps</Label>
+                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                  <Link className="w-3.5 h-3.5 text-muted-foreground" />
+                  Link Google Maps
+                </Label>
                 <Input
                   value={settings.google_maps_link}
                   onChange={(e) => setSettings({ ...settings, google_maps_link: e.target.value })}
-                  className="h-9 text-sm text-gray-900"
+                  className="h-10 text-sm"
                   placeholder="https://maps.google.com/..."
                 />
                 <p className="text-[10px] text-muted-foreground">
@@ -1649,77 +1730,83 @@ export default function SettingsPage() {
           </Card>
 
           {/* Segurança */}
-          <Card>
-            <CardHeader className="pb-3 pt-4 px-4">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Lock className="w-4 h-4" />
+          <Card className="border-border/50">
+            <CardHeader className="pb-4 pt-5 px-5">
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Lock className="w-4 h-4 text-primary" />
                 Segurança
               </CardTitle>
               <p className="text-xs text-muted-foreground mt-1">
-                Atualize sua senha de acesso
+                Altere sua senha de acesso
               </p>
             </CardHeader>
-            <CardContent className="space-y-4 px-4 pb-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <CardContent className="space-y-5 px-5 pb-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div className="space-y-2">
-                  <Label className="text-xs font-medium">Nova Senha</Label>
+                  <Label className="text-xs font-medium text-foreground">Nova Senha</Label>
                   <div className="relative">
                     <Input
                       type={showNewPassword ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="h-9 text-sm pr-10 text-gray-900"
+                      className={`h-10 text-sm pr-10 transition-all ${
+                        newPassword.length > 0 && newPassword.length >= 6
+                          ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
+                          : newPassword.length > 0
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                            : 'border-input'
+                      }`}
                       placeholder="Mínimo 6 caracteres"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-9 w-9"
+                      className="absolute right-0 top-0 h-10 w-10 hover:bg-transparent"
                       onClick={() => setShowNewPassword(!showNewPassword)}
                     >
-                      {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showNewPassword ? <EyeOff className="w-4 h-4 text-muted-foreground" /> : <Eye className="w-4 h-4 text-muted-foreground" />}
                     </Button>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs font-medium">Confirmar Nova Senha</Label>
+                  <Label className="text-xs font-medium text-foreground">Confirmar Nova Senha</Label>
                   <div className="relative">
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="h-9 text-sm pr-10 text-gray-900"
+                      className={`h-10 text-sm pr-10 transition-all ${
+                        confirmPassword.length > 0 && confirmPassword === newPassword && newPassword.length >= 6
+                          ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
+                          : confirmPassword.length > 0
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                            : 'border-input'
+                      }`}
                       placeholder="Repita a nova senha"
                     />
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="absolute right-0 top-0 h-9 w-9"
+                      className="absolute right-0 top-0 h-10 w-10 hover:bg-transparent"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     >
-                      {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showConfirmPassword ? <EyeOff className="w-4 h-4 text-muted-foreground" /> : <Eye className="w-4 h-4 text-muted-foreground" />}
                     </Button>
                   </div>
+                  {confirmPassword.length > 0 && confirmPassword !== newPassword && (
+                    <p className="text-[10px] text-red-500">As senhas não coincidem</p>
+                  )}
                 </div>
               </div>
 
               <Button
                 size="sm"
-                className="h-9 text-sm"
-                disabled={changingPassword || !newPassword || !confirmPassword}
+                className="h-9 text-sm gap-2"
+                disabled={changingPassword || !newPassword || !confirmPassword || newPassword !== confirmPassword || newPassword.length < 6}
                 onClick={async () => {
-                  if (newPassword.length < 6) {
-                    toast.error("A senha deve ter no mínimo 6 caracteres");
-                    return;
-                  }
-                  if (newPassword !== confirmPassword) {
-                    toast.error("As senhas não coincidem");
-                    return;
-                  }
-                  
                   setChangingPassword(true);
                   try {
                     const { error } = await supabase.auth.updateUser({
@@ -1741,12 +1828,12 @@ export default function SettingsPage() {
               >
                 {changingPassword ? (
                   <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Alterando...
                   </>
                 ) : (
                   <>
-                    <Lock className="w-4 h-4 mr-2" />
+                    <Lock className="w-4 h-4" />
                     Alterar Senha
                   </>
                 )}
