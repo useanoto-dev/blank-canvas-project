@@ -225,47 +225,19 @@ export default function DashboardLayout() {
 
   const checkAuth = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        navigate("/");
-        return;
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("store_id, is_owner")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (!profile?.store_id) {
-        // User is logged in but has no store - redirect to onboarding
-        navigate("/dashboard/onboarding");
-        return;
-      }
-
+      // Buscar primeira loja disponível para desenvolvimento
       const { data: storeData } = await supabase
         .from("stores")
         .select("*")
-        .eq("id", profile.store_id)
+        .limit(1)
         .maybeSingle();
 
       if (storeData) {
         setStore(storeData);
       }
 
-      const { data: subData } = await supabase
-        .from("subscriptions")
-        .select("status, trial_ends_at")
-        .eq("store_id", profile.store_id)
-        .maybeSingle();
-
-      if (subData) {
-        setSubscription(subData);
-      }
-
     } catch (error) {
-      console.error("Auth check error:", error);
+      console.error("Store fetch error:", error);
     } finally {
       setLoading(false);
     }
