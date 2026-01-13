@@ -15,7 +15,9 @@ import { MenuThemeSelector, getThemeColors } from "@/components/admin/MenuThemeS
 import WeeklyScheduleEditor, { WeeklySchedule, DEFAULT_SCHEDULE } from "@/components/admin/WeeklyScheduleEditor";
 import { parseSchedule } from "@/lib/scheduleUtils";
 import { toast } from "sonner";
-import { Loader2, Save, Clock, MapPin, Phone, Palette, Info, ImageIcon, Timer, Store, DollarSign, Truck, QrCode, Printer, Download, ChevronDown, ChevronUp, Copy, ExternalLink, AlertTriangle, Link, ClipboardList, Settings, CreditCard, PanelLeft, User, Lock, Eye, EyeOff, Cloud, Pencil, X, Check, Mail } from "lucide-react";
+import { Loader2, Save, Clock, MapPin, Phone, Palette, Info, ImageIcon, Timer, Store, DollarSign, Truck, QrCode, Printer, Download, ChevronDown, ChevronUp, Copy, ExternalLink, AlertTriangle, Link, ClipboardList, Settings, CreditCard, PanelLeft, User, Lock, Eye, EyeOff, Cloud, Pencil, X, Check, Mail, Navigation } from "lucide-react";
+import { fetchAddressByCep, formatCep } from "@/lib/viaCep";
+import { states } from "@/lib/brazilLocations";
 import { PrintNodeSettings } from "@/components/admin/PrintNodeSettings";
 import { PrintJobHistory } from "@/components/admin/PrintJobHistory";
 
@@ -100,6 +102,11 @@ interface StoreSettings {
   whatsapp: string;
   instagram: string;
   address: string;
+  cep: string;
+  city: string;
+  state: string;
+  neighborhood: string;
+  address_number: string;
   google_maps_link: string;
   about_us: string;
   pix_key: string;
@@ -151,6 +158,8 @@ export default function SettingsPage() {
   const [editingProfile, setEditingProfile] = useState(false);
   const [editedFullName, setEditedFullName] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
+  const [loadingCep, setLoadingCep] = useState(false);
+  const [cepValid, setCepValid] = useState<boolean | null>(null);
 
   // Initialize edited values when profile loads
   useEffect(() => {
@@ -368,6 +377,11 @@ export default function SettingsPage() {
         whatsapp: data.whatsapp || "",
         instagram: data.instagram || "",
         address: data.address || "",
+        cep: (data as any).cep || "",
+        city: (data as any).city || "",
+        state: (data as any).state || "",
+        neighborhood: (data as any).neighborhood || "",
+        address_number: (data as any).address_number || "",
         google_maps_link: (data as any).google_maps_link || "",
         about_us: (data as any).about_us || "",
         pix_key: data.pix_key || "",
@@ -448,6 +462,11 @@ export default function SettingsPage() {
           whatsapp: settings.whatsapp,
           instagram: settings.instagram,
           address: settings.address,
+          cep: settings.cep,
+          city: settings.city,
+          state: settings.state,
+          neighborhood: settings.neighborhood,
+          address_number: settings.address_number,
           google_maps_link: settings.google_maps_link,
           about_us: settings.about_us,
           pix_key: settings.pix_key,
@@ -1521,12 +1540,12 @@ export default function SettingsPage() {
                       disabled={!editingProfile}
                       className={`h-10 text-sm transition-all ${
                         !editingProfile 
-                          ? 'bg-muted/30 text-foreground border-transparent cursor-not-allowed' 
-                          : editedFullName.trim().length >= 2
+                          ? 'bg-muted/30 text-foreground border-muted cursor-not-allowed' 
+                          : `bg-background text-foreground ${editedFullName.trim().length >= 2
                             ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                             : editedFullName.trim().length > 0
                               ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-                              : 'border-input'
+                              : 'border-input'}`
                       }`}
                       placeholder="Seu nome completo"
                     />
@@ -1556,7 +1575,7 @@ export default function SettingsPage() {
                       type="email"
                       value={profile?.email || ""}
                       disabled
-                      className="h-10 text-sm bg-muted/30 text-foreground border-transparent cursor-not-allowed"
+                      className="h-10 text-sm bg-muted/30 text-foreground border-muted cursor-not-allowed"
                     />
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <Lock className="w-3.5 h-3.5 text-muted-foreground" />
@@ -1596,7 +1615,7 @@ export default function SettingsPage() {
                       markTouched('name');
                     }}
                     onBlur={() => markTouched('name')}
-                    className={`h-10 text-sm transition-all ${
+                    className={`h-10 text-sm bg-background text-foreground transition-all ${
                       touched.name && settings.name.trim().length >= 2
                         ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                         : touched.name && settings.name.trim().length > 0
@@ -1635,7 +1654,7 @@ export default function SettingsPage() {
                     }}
                     onBlur={() => markTouched('whatsapp')}
                     maskType="whatsapp"
-                    className="h-10 text-sm"
+                    className="h-10 text-sm bg-background text-foreground"
                     showSuccessState
                     touched={touched.whatsapp}
                   />
@@ -1648,27 +1667,10 @@ export default function SettingsPage() {
                   <Input
                     value={settings.instagram}
                     onChange={(e) => setSettings({ ...settings, instagram: e.target.value })}
-                    className="h-10 text-sm"
+                    className="h-10 text-sm bg-background text-foreground"
                     placeholder="@seurestaurante"
                   />
                 </div>
-              </div>
-
-              {/* PIX */}
-              <div className="space-y-2">
-                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
-                  <QrCode className="w-3.5 h-3.5 text-muted-foreground" />
-                  Chave PIX
-                </Label>
-                <Input
-                  value={settings.pix_key}
-                  onChange={(e) => setSettings({ ...settings, pix_key: e.target.value })}
-                  className="h-10 text-sm"
-                  placeholder="CPF, CNPJ, e-mail ou chave aleatória"
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Será exibida para clientes que escolherem pagamento via PIX
-                </p>
               </div>
             </CardContent>
           </Card>
@@ -1685,46 +1687,151 @@ export default function SettingsPage() {
               </p>
             </CardHeader>
             <CardContent className="space-y-5 px-5 pb-5">
-              <div className="space-y-2">
-                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
-                  Endereço Completo
-                </Label>
-                <Textarea
-                  value={settings.address}
-                  onChange={(e) => {
-                    setSettings({ ...settings, address: e.target.value });
-                    markTouched('address');
-                  }}
-                  onBlur={() => markTouched('address')}
-                  className={`text-sm min-h-[80px] resize-none transition-all ${
-                    touched.address && settings.address.trim().length >= 10
-                      ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
-                      : touched.address && settings.address.trim().length > 0
-                        ? 'border-amber-500 focus:border-amber-500 focus:ring-amber-500/20'
-                        : 'border-input'
-                  }`}
-                  placeholder="Rua, número, bairro - Cidade/Estado"
-                  rows={2}
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Exemplo: Rua das Flores, 123 - Centro, São Paulo/SP
-                </p>
+              {/* CEP com busca automática */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                    <Navigation className="w-3.5 h-3.5 text-muted-foreground" />
+                    CEP
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      value={formatCep(settings.cep)}
+                      onChange={async (e) => {
+                        const formatted = formatCep(e.target.value);
+                        const cleanCep = e.target.value.replace(/\D/g, "");
+                        setSettings({ ...settings, cep: cleanCep });
+                        markTouched('cep');
+                        
+                        if (cleanCep.length < 8) {
+                          setCepValid(null);
+                          return;
+                        }
+                        
+                        if (cleanCep.length === 8) {
+                          setLoadingCep(true);
+                          setCepValid(null);
+                          const address = await fetchAddressByCep(cleanCep);
+                          setLoadingCep(false);
+                          
+                          if (address) {
+                            setCepValid(true);
+                            setSettings(prev => prev ? {
+                              ...prev,
+                              cep: cleanCep,
+                              address: address.logradouro,
+                              neighborhood: address.bairro,
+                              city: address.localidade,
+                              state: address.uf,
+                            } : prev);
+                            toast.success("Endereço encontrado!");
+                          } else {
+                            setCepValid(false);
+                            toast.error("CEP não encontrado");
+                          }
+                        }
+                      }}
+                      onBlur={() => markTouched('cep')}
+                      className={`h-10 text-sm bg-background text-foreground transition-all ${
+                        cepValid === true
+                          ? 'border-green-500 focus:border-green-500'
+                          : cepValid === false
+                            ? 'border-red-500 focus:border-red-500'
+                            : 'border-input'
+                      }`}
+                      placeholder="00000-000"
+                      maxLength={9}
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      {loadingCep ? (
+                        <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                      ) : cepValid === true ? (
+                        <Check className="w-4 h-4 text-green-500" />
+                      ) : cepValid === false ? (
+                        <X className="w-4 h-4 text-red-500" />
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Cidade - Read only após CEP */}
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-foreground">Cidade</Label>
+                  <Input
+                    value={settings.city}
+                    onChange={(e) => setSettings({ ...settings, city: e.target.value })}
+                    className={`h-10 text-sm bg-background text-foreground ${
+                      settings.city ? 'border-green-500/50' : 'border-input'
+                    }`}
+                    placeholder="Cidade"
+                    readOnly={!!cepValid}
+                  />
+                </div>
+
+                {/* Estado - Read only após CEP */}
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-foreground">Estado</Label>
+                  <Input
+                    value={settings.state ? (states.find(s => s.sigla === settings.state)?.nome || settings.state) : ""}
+                    onChange={(e) => setSettings({ ...settings, state: e.target.value })}
+                    className={`h-10 text-sm bg-background text-foreground ${
+                      settings.state ? 'border-green-500/50' : 'border-input'
+                    }`}
+                    placeholder="Estado"
+                    readOnly={!!cepValid}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
-                  <Link className="w-3.5 h-3.5 text-muted-foreground" />
-                  Link Google Maps
-                </Label>
-                <Input
-                  value={settings.google_maps_link}
-                  onChange={(e) => setSettings({ ...settings, google_maps_link: e.target.value })}
-                  className="h-10 text-sm"
-                  placeholder="https://maps.google.com/..."
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Cole o link compartilhável do Google Maps para facilitar a localização
-                </p>
+              {/* Endereço detalhado */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2 space-y-2">
+                  <Label className="text-xs font-medium text-foreground">Rua / Logradouro</Label>
+                  <Input
+                    value={settings.address}
+                    onChange={(e) => {
+                      setSettings({ ...settings, address: e.target.value });
+                      markTouched('address');
+                    }}
+                    className="h-10 text-sm bg-background text-foreground"
+                    placeholder="Rua, Avenida, etc."
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-foreground">Número</Label>
+                  <Input
+                    value={settings.address_number}
+                    onChange={(e) => setSettings({ ...settings, address_number: e.target.value })}
+                    className="h-10 text-sm bg-background text-foreground"
+                    placeholder="123"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium text-foreground">Bairro</Label>
+                  <Input
+                    value={settings.neighborhood}
+                    onChange={(e) => setSettings({ ...settings, neighborhood: e.target.value })}
+                    className="h-10 text-sm bg-background text-foreground"
+                    placeholder="Bairro"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs font-medium flex items-center gap-1.5 text-foreground">
+                    <Link className="w-3.5 h-3.5 text-muted-foreground" />
+                    Link Google Maps
+                  </Label>
+                  <Input
+                    value={settings.google_maps_link}
+                    onChange={(e) => setSettings({ ...settings, google_maps_link: e.target.value })}
+                    className="h-10 text-sm bg-background text-foreground"
+                    placeholder="https://maps.google.com/..."
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -1749,7 +1856,7 @@ export default function SettingsPage() {
                       type={showNewPassword ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className={`h-10 text-sm pr-10 transition-all ${
+                      className={`h-10 text-sm pr-10 bg-background text-foreground transition-all ${
                         newPassword.length > 0 && newPassword.length >= 6
                           ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                           : newPassword.length > 0
@@ -1777,7 +1884,7 @@ export default function SettingsPage() {
                       type={showConfirmPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className={`h-10 text-sm pr-10 transition-all ${
+                      className={`h-10 text-sm pr-10 bg-background text-foreground transition-all ${
                         confirmPassword.length > 0 && confirmPassword === newPassword && newPassword.length >= 6
                           ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
                           : confirmPassword.length > 0
