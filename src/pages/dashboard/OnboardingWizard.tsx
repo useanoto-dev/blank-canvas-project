@@ -488,10 +488,21 @@ export default function OnboardingWizard() {
         const storeName = userMeta.store_name || (profile?.full_name ? `Loja de ${profile.full_name}` : "Minha Loja");
         const storeState = userMeta.state || "";
         const storeCity = userMeta.city || "";
-        const storeAddress = userMeta.store_address || "";
+        const storeStreet = userMeta.store_address || "";
+        const storeNumber = userMeta.address_number || "";
+        const storeNeighborhood = userMeta.neighborhood || "";
+        const storeCep = userMeta.cep || "";
         
-        // Build full address with city and state
-        const fullAddress = [storeAddress, storeCity, storeState].filter(Boolean).join(", ");
+        // Build full address with all components
+        const addressParts = [
+          storeStreet,
+          storeNumber ? `nº ${storeNumber}` : "",
+          storeNeighborhood,
+          storeCity,
+          storeState,
+          storeCep ? `CEP: ${storeCep}` : ""
+        ].filter(Boolean);
+        const fullAddress = addressParts.join(", ");
         
         // Generate a unique slug from email or random
         const baseSlug = user.email?.split("@")[0] || `loja-${Date.now()}`;

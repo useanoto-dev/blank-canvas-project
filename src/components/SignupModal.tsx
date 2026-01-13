@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { X, Check, Eye, EyeOff, ChevronDown, MapPin } from "lucide-react";
+import { X, Check, Eye, EyeOff, ChevronDown, MapPin, Loader2 } from "lucide-react";
 import { MascotSpinner } from "@/components/MascotSpinner";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { applyMask, removeMask } from "@/hooks/useInputMask";
 import { states, citiesByState, searchStates, searchCities } from "@/lib/brazilLocations";
+import { fetchAddressByCep, formatCep } from "@/lib/viaCep";
 
 // Validation helpers
 const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -117,7 +118,11 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
   const [storeName, setStoreName] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+  const [cep, setCep] = useState("");
   const [storeAddress, setStoreAddress] = useState("");
+  const [neighborhood, setNeighborhood] = useState("");
+  const [addressNumber, setAddressNumber] = useState("");
+  const [loadingCep, setLoadingCep] = useState(false);
   const [stateSearch, setStateSearch] = useState("");
   const [citySearch, setCitySearch] = useState("");
   const [showStateDropdown, setShowStateDropdown] = useState(false);
@@ -126,6 +131,39 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  // CEP autocomplete
+  const handleCepChange = async (value: string) => {
+    const formatted = formatCep(value);
+    setCep(formatted);
+    
+    const cleanCep = value.replace(/\D/g, "");
+    if (cleanCep.length === 8) {
+      setLoadingCep(true);
+      const address = await fetchAddressByCep(cleanCep);
+      setLoadingCep(false);
+      
+      if (address) {
+        setStoreAddress(address.logradouro);
+        setNeighborhood(address.bairro);
+        
+        // Find and set state
+        const stateObj = states.find(s => s.sigla === address.uf);
+        if (stateObj) {
+          setSelectedState(stateObj.sigla);
+          setStateSearch(stateObj.nome);
+          
+          // Set city
+          setSelectedCity(address.localidade);
+          setCitySearch(address.localidade);
+        }
+        
+        toast.success("Endereço encontrado!");
+      } else {
+        toast.error("CEP não encontrado");
+      }
+    }
+  };
   
   const stateRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
@@ -248,7 +286,10 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
             phone: removeMask(phone),
             state: selectedState,
             city: selectedCity,
+            cep: cep.replace(/\D/g, ""),
             store_address: storeAddress,
+            address_number: addressNumber,
+            neighborhood: neighborhood,
           },
         },
       });
@@ -534,20 +575,62 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                   </div>
                 </div>
 
-                {/* Endereço */}
+                {/* CEP */}
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2">
                     <MapPin className="w-4 h-4 text-gray-400" />
                   </div>
                   <Input
                     type="text"
-                    placeholder="Endereço completo (Rua, número, bairro)"
+                    placeholder="CEP"
+                    value={cep}
+                    onChange={(e) => handleCepChange(e.target.value)}
+                    className="w-full h-12 sm:h-14 pl-10 pr-10 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                    disabled={loading}
+                    maxLength={9}
+                  />
+                  {loadingCep && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      <Loader2 className="w-4 h-4 text-amber-500 animate-spin" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Endereço (Rua) */}
+                <div className="relative">
+                  <Input
+                    type="text"
+                    placeholder="Rua / Logradouro"
                     value={storeAddress}
                     onChange={(e) => setStoreAddress(e.target.value)}
                     onBlur={() => handleBlur("address")}
-                    className="w-full h-12 sm:h-14 pl-10 pr-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                    className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
                     disabled={loading}
                   />
+                </div>
+
+                {/* Número e Bairro */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="Número"
+                      value={addressNumber}
+                      onChange={(e) => setAddressNumber(e.target.value)}
+                      className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="Bairro"
+                      value={neighborhood}
+                      onChange={(e) => setNeighborhood(e.target.value)}
+                      className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                      disabled={loading}
+                    />
+                  </div>
                 </div>
 
                 {/* Celular */}
