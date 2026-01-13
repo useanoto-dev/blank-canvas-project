@@ -483,16 +483,27 @@ export default function OnboardingWizard() {
 
       // If user doesn't have a store yet, create one
       if (!storeId) {
+        // Get user metadata for location info
+        const userMeta = user.user_metadata || {};
+        const storeName = userMeta.store_name || (profile?.full_name ? `Loja de ${profile.full_name}` : "Minha Loja");
+        const storeState = userMeta.state || "";
+        const storeCity = userMeta.city || "";
+        const storeAddress = userMeta.store_address || "";
+        
+        // Build full address with city and state
+        const fullAddress = [storeAddress, storeCity, storeState].filter(Boolean).join(", ");
+        
         // Generate a unique slug from email or random
         const baseSlug = user.email?.split("@")[0] || `loja-${Date.now()}`;
         const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 8)}`;
         
-        // Create the store
+        // Create the store with location data
         const { data: newStore, error: storeError } = await supabase
           .from("stores")
           .insert({
-            name: profile?.full_name ? `Loja de ${profile.full_name}` : "Minha Loja",
+            name: storeName,
             slug: slug,
+            address: fullAddress || null,
             onboarding_completed: true,
           })
           .select()
