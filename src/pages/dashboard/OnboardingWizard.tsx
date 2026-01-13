@@ -508,10 +508,11 @@ export default function OnboardingWizard() {
         const baseSlug = user.email?.split("@")[0] || `loja-${Date.now()}`;
         const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 8)}`;
         
-        // Create the store with location data
+        // Create the store with location data and owner_id
         const { data: newStore, error: storeError } = await supabase
           .from("stores")
           .insert({
+            owner_id: user.id,
             name: storeName,
             slug: slug,
             address: fullAddress || null,
