@@ -354,8 +354,8 @@ export default function SettingsPage() {
         return;
       }
 
-      const { data, error } = await supabase
-        .from("stores")
+      const { data, error } = await (supabase
+        .from("stores") as any)
         .select("*")
         .eq("id", storeId)
         .single();
@@ -369,34 +369,34 @@ export default function SettingsPage() {
         banner_url: data.banner_url,
         primary_color: data.primary_color || "#dc2626",
         secondary_color: data.secondary_color || "#f97316",
-        font_family: (data as any).font_family || "Inter",
+        font_family: data.font_family || "Inter",
         open_hour: data.open_hour || 8,
         close_hour: data.close_hour || 22,
         is_open_override: data.is_open_override,
         phone: data.phone || "",
-        whatsapp: data.whatsapp || "",
+        whatsapp: data.whatsapp_phone || "",
         instagram: data.instagram || "",
         address: data.address || "",
-        cep: (data as any).cep || "",
-        city: (data as any).city || "",
-        state: (data as any).state || "",
-        neighborhood: (data as any).neighborhood || "",
-        address_number: (data as any).address_number || "",
-        google_maps_link: (data as any).google_maps_link || "",
-        about_us: (data as any).about_us || "",
+        cep: data.cep || "",
+        city: data.city || "",
+        state: data.state || "",
+        neighborhood: data.neighborhood || "",
+        address_number: data.address_number || "",
+        google_maps_link: data.google_maps_link || "",
+        about_us: data.about_us || "",
         pix_key: data.pix_key || "",
-        estimated_prep_time: (data as any).estimated_prep_time || 25,
-        estimated_delivery_time: (data as any).estimated_delivery_time || 20,
+        estimated_prep_time: data.estimated_prep_time || 25,
+        estimated_delivery_time: data.estimated_delivery_time || 20,
         delivery_fee: data.delivery_fee ?? 5,
         min_order_value: data.min_order_value ?? 0,
-        schedule: parseSchedule((data as any).schedule),
-        use_comanda_mode: (data as any).use_comanda_mode ?? true,
-        sidebar_color: (data as any).sidebar_color || "amber",
-        printnode_printer_id: (data as any).printnode_printer_id || null,
-        printnode_auto_print: (data as any).printnode_auto_print ?? false,
-        printnode_max_retries: (data as any).printnode_max_retries ?? 2,
-        printer_width: (data as any).printer_width || '80mm',
-        print_footer_message: (data as any).print_footer_message || null,
+        schedule: parseSchedule(data.schedule),
+        use_comanda_mode: data.use_comanda_mode ?? true,
+        sidebar_color: data.sidebar_color || "amber",
+        printnode_printer_id: data.printnode_printer_id || null,
+        printnode_auto_print: data.printnode_auto_print ?? false,
+        printnode_max_retries: data.printnode_max_retries ?? 2,
+        printer_width: data.printer_width || '80mm',
+        print_footer_message: data.print_footer_message || null,
       };
       setSettings(settingsData);
       setOriginalSettings(settingsData);
@@ -445,8 +445,8 @@ export default function SettingsPage() {
 
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from("stores")
+      const { error } = await (supabase
+        .from("stores") as any)
         .update({
           name: settings.name,
           slug: newSlug,
@@ -459,7 +459,7 @@ export default function SettingsPage() {
           close_hour: settings.close_hour,
           is_open_override: settings.is_open_override,
           phone: settings.phone,
-          whatsapp: settings.whatsapp,
+          whatsapp_phone: settings.whatsapp,
           instagram: settings.instagram,
           address: settings.address,
           cep: settings.cep,
@@ -482,7 +482,7 @@ export default function SettingsPage() {
           printnode_max_retries: settings.printnode_max_retries,
           printer_width: settings.printer_width,
           print_footer_message: settings.print_footer_message,
-        } as any)
+        })
         .eq("id", settings.id);
 
       if (error) throw error;
