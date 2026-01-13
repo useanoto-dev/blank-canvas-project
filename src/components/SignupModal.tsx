@@ -433,7 +433,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                     value={cep}
                     onChange={(e) => handleCepChange(e.target.value)}
                     onBlur={() => handleBlur("cep")}
-                    className={`w-full h-12 sm:h-14 pl-10 pr-10 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white ${
+                    className={`w-full h-12 sm:h-14 pl-10 pr-10 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white text-gray-900 ${
                       cepValid === null 
                         ? "border-gray-200 focus:border-amber-400" 
                         : cepValid 
@@ -506,7 +506,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                     value={storeAddress}
                     onChange={(e) => setStoreAddress(e.target.value)}
                     onBlur={() => handleBlur("address")}
-                    className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                    className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400 text-gray-900"
                     disabled={loading}
                   />
                 </div>
@@ -519,7 +519,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                       placeholder="Número"
                       value={addressNumber}
                       onChange={(e) => setAddressNumber(e.target.value)}
-                      className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                      className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400 text-gray-900"
                       disabled={loading}
                     />
                   </div>
@@ -529,7 +529,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                       placeholder="Bairro"
                       value={neighborhood}
                       onChange={(e) => setNeighborhood(e.target.value)}
-                      className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                      className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400 text-gray-900"
                       disabled={loading}
                     />
                   </div>
