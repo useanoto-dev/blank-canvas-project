@@ -70,6 +70,7 @@ export type Database = {
           min_order_value: number | null
           name: string
           neighborhood: string | null
+          onboarding_completed: boolean | null
           open_hour: number | null
           owner_id: string
           phone: string | null
@@ -117,6 +118,7 @@ export type Database = {
           min_order_value?: number | null
           name: string
           neighborhood?: string | null
+          onboarding_completed?: boolean | null
           open_hour?: number | null
           owner_id: string
           phone?: string | null
@@ -164,6 +166,7 @@ export type Database = {
           min_order_value?: number | null
           name?: string
           neighborhood?: string | null
+          onboarding_completed?: boolean | null
           open_hour?: number | null
           owner_id?: string
           phone?: string | null
