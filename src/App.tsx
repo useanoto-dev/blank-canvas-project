@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/hooks/useAuth";
 import { StoreStatusProvider } from "@/contexts/StoreStatusContext";
@@ -13,9 +13,6 @@ import OfflineIndicator from "@/components/OfflineIndicator";
 import { useRoutePreloader } from "@/hooks/useRoutePreloader";
 
 // Eager loaded pages (critical path)
-import Landing from "@/pages/Landing";
-import ForgotPasswordPage from "@/pages/ForgotPasswordPage";
-import ResetPasswordPage from "@/pages/ResetPasswordPage";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfUse from "@/pages/TermsOfUse";
 import FAQPage from "@/pages/FAQPage";
@@ -90,9 +87,7 @@ function AnimatedRoutes() {
       <TopProgressBar isLoading={isNavigating} />
       <Suspense fallback={null}>
         <Routes location={location}>
-          <Route path="/" element={<Landing />} />
-          <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
-          <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/privacidade" element={<PrivacyPolicy />} />
           <Route path="/termos" element={<TermsOfUse />} />
           <Route path="/faq" element={<FAQPage />} />
