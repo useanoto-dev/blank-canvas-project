@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { X, Check, Eye, EyeOff, ChevronDown, MapPin, Loader2 } from "lucide-react";
+import { X, Check, Eye, EyeOff, MapPin, Loader2 } from "lucide-react";
 import { MascotSpinner } from "@/components/MascotSpinner";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { applyMask, removeMask } from "@/hooks/useInputMask";
-import { states, citiesByState, searchStates, searchCities } from "@/lib/brazilLocations";
+import { states } from "@/lib/brazilLocations";
 import { fetchAddressByCep, formatCep } from "@/lib/viaCep";
 
 // Validation helpers
@@ -123,10 +123,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
   const [neighborhood, setNeighborhood] = useState("");
   const [addressNumber, setAddressNumber] = useState("");
   const [loadingCep, setLoadingCep] = useState(false);
-  const [stateSearch, setStateSearch] = useState("");
-  const [citySearch, setCitySearch] = useState("");
-  const [showStateDropdown, setShowStateDropdown] = useState(false);
-  const [showCityDropdown, setShowCityDropdown] = useState(false);
+  const [cepValid, setCepValid] = useState<boolean | null>(null);
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -137,13 +134,25 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
     const formatted = formatCep(value);
     setCep(formatted);
     
+    // Reset address fields when CEP changes
     const cleanCep = value.replace(/\D/g, "");
+    if (cleanCep.length < 8) {
+      setCepValid(null);
+      setSelectedState("");
+      setSelectedCity("");
+      setStoreAddress("");
+      setNeighborhood("");
+      return;
+    }
+    
     if (cleanCep.length === 8) {
       setLoadingCep(true);
+      setCepValid(null);
       const address = await fetchAddressByCep(cleanCep);
       setLoadingCep(false);
       
       if (address) {
+        setCepValid(true);
         setStoreAddress(address.logradouro);
         setNeighborhood(address.bairro);
         
@@ -151,43 +160,29 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
         const stateObj = states.find(s => s.sigla === address.uf);
         if (stateObj) {
           setSelectedState(stateObj.sigla);
-          setStateSearch(stateObj.nome);
-          
-          // Set city
           setSelectedCity(address.localidade);
-          setCitySearch(address.localidade);
+          setTouched(prev => ({ ...prev, state: true, city: true }));
         }
         
         toast.success("Endereço encontrado!");
       } else {
+        setCepValid(false);
+        setSelectedState("");
+        setSelectedCity("");
+        setStoreAddress("");
+        setNeighborhood("");
         toast.error("CEP não encontrado");
       }
     }
   };
   
-  const stateRef = useRef<HTMLDivElement>(null);
-  const cityRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdowns when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (stateRef.current && !stateRef.current.contains(e.target as Node)) {
-        setShowStateDropdown(false);
-      }
-      if (cityRef.current && !cityRef.current.contains(e.target as Node)) {
-        setShowCityDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   // Touched state
   const [touched, setTouched] = useState({
     fullName: false,
     storeName: false,
     state: false,
     city: false,
+    cep: false,
     address: false,
     phone: false,
     email: false,
@@ -200,6 +195,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
     storeName: { isValid: isValidName(storeName), isTouched: touched.storeName },
     state: { isValid: selectedState.length > 0, isTouched: touched.state },
     city: { isValid: selectedCity.length > 0, isTouched: touched.city },
+    cep: { isValid: cepValid === true, isTouched: touched.cep || cep.length > 0 },
     phone: { isValid: isValidPhone(phone), isTouched: touched.phone },
     email: { isValid: isValidEmail(email), isTouched: touched.email },
     password: { isValid: isValidPassword(password), isTouched: touched.password },
@@ -225,6 +221,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
       storeName: true,
       state: true,
       city: true,
+      cep: true,
       address: true,
       phone: true,
       email: true,
@@ -425,156 +422,6 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                   <ValidationIcon validation={validations.storeName} />
                 </div>
 
-                {/* Estado e Cidade */}
-                <div className="grid grid-cols-2 gap-2">
-                  {/* Estado */}
-                  <div className="relative" ref={stateRef}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowStateDropdown(!showStateDropdown);
-                        setShowCityDropdown(false);
-                      }}
-                      onBlur={() => handleBlur("state")}
-                      className={`w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white text-left flex items-center justify-between ${
-                        !validations.state.isTouched 
-                          ? "border-gray-200 focus:border-amber-400" 
-                          : validations.state.isValid 
-                            ? "border-green-500 bg-green-50/30" 
-                            : "border-red-400 bg-red-50/30"
-                      }`}
-                      disabled={loading}
-                    >
-                      <span className={selectedState ? "text-gray-900" : "text-gray-400"}>
-                        {selectedState ? states.find(s => s.sigla === selectedState)?.nome : "Estado"}
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showStateDropdown ? "rotate-180" : ""}`} />
-                    </button>
-                    
-                    <AnimatePresence>
-                      {showStateDropdown && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-hidden"
-                        >
-                          <div className="p-2 border-b border-gray-100">
-                            <Input
-                              type="text"
-                              placeholder="Buscar estado..."
-                              value={stateSearch}
-                              onChange={(e) => setStateSearch(e.target.value)}
-                              className="h-10 text-sm"
-                              autoFocus
-                            />
-                          </div>
-                          <div className="overflow-y-auto max-h-44">
-                            {searchStates(stateSearch).map((state) => (
-                              <button
-                                key={state.sigla}
-                                type="button"
-                                onClick={() => {
-                                  setSelectedState(state.sigla);
-                                  setSelectedCity("");
-                                  setCitySearch("");
-                                  setShowStateDropdown(false);
-                                  setStateSearch("");
-                                  setTouched(prev => ({ ...prev, state: true }));
-                                }}
-                                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-amber-50 transition-colors flex items-center justify-between ${
-                                  selectedState === state.sigla ? "bg-amber-100 text-amber-800 font-medium" : "text-gray-700"
-                                }`}
-                              >
-                                <span>{state.nome}</span>
-                                <span className="text-gray-400 text-xs">{state.sigla}</span>
-                              </button>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-
-                  {/* Cidade */}
-                  <div className="relative" ref={cityRef}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!selectedState) {
-                          toast.error("Selecione um estado primeiro");
-                          return;
-                        }
-                        setShowCityDropdown(!showCityDropdown);
-                        setShowStateDropdown(false);
-                      }}
-                      onBlur={() => handleBlur("city")}
-                      className={`w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white text-left flex items-center justify-between ${
-                        !selectedState 
-                          ? "border-gray-200 opacity-60 cursor-not-allowed" 
-                          : !validations.city.isTouched 
-                            ? "border-gray-200 focus:border-amber-400" 
-                            : validations.city.isValid 
-                              ? "border-green-500 bg-green-50/30" 
-                              : "border-red-400 bg-red-50/30"
-                      }`}
-                      disabled={loading || !selectedState}
-                    >
-                      <span className={selectedCity ? "text-gray-900" : "text-gray-400"}>
-                        {selectedCity || "Cidade"}
-                      </span>
-                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showCityDropdown ? "rotate-180" : ""}`} />
-                    </button>
-                    
-                    <AnimatePresence>
-                      {showCityDropdown && selectedState && (
-                        <motion.div
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className="absolute z-50 top-full left-0 right-0 mt-1 bg-white border-2 border-gray-200 rounded-xl shadow-lg max-h-60 overflow-hidden"
-                        >
-                          <div className="p-2 border-b border-gray-100">
-                            <Input
-                              type="text"
-                              placeholder="Buscar cidade..."
-                              value={citySearch}
-                              onChange={(e) => setCitySearch(e.target.value)}
-                              className="h-10 text-sm"
-                              autoFocus
-                            />
-                          </div>
-                          <div className="overflow-y-auto max-h-44">
-                            {searchCities(selectedState, citySearch).length > 0 ? (
-                              searchCities(selectedState, citySearch).map((city) => (
-                                <button
-                                  key={city}
-                                  type="button"
-                                  onClick={() => {
-                                    setSelectedCity(city);
-                                    setShowCityDropdown(false);
-                                    setCitySearch("");
-                                    setTouched(prev => ({ ...prev, city: true }));
-                                  }}
-                                  className={`w-full px-4 py-2.5 text-left text-sm hover:bg-amber-50 transition-colors ${
-                                    selectedCity === city ? "bg-amber-100 text-amber-800 font-medium" : "text-gray-700"
-                                  }`}
-                                >
-                                  {city}
-                                </button>
-                              ))
-                            ) : (
-                              <div className="px-4 py-3 text-sm text-gray-500 text-center">
-                                Nenhuma cidade encontrada
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-
                 {/* CEP */}
                 <div className="relative">
                   <div className="absolute left-4 top-1/2 -translate-y-1/2">
@@ -585,16 +432,71 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                     placeholder="CEP"
                     value={cep}
                     onChange={(e) => handleCepChange(e.target.value)}
-                    className="w-full h-12 sm:h-14 pl-10 pr-10 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                    onBlur={() => handleBlur("cep")}
+                    className={`w-full h-12 sm:h-14 pl-10 pr-10 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white ${
+                      cepValid === null 
+                        ? "border-gray-200 focus:border-amber-400" 
+                        : cepValid 
+                          ? "border-green-500 bg-green-50/30" 
+                          : "border-red-400 bg-red-50/30"
+                    }`}
                     disabled={loading}
                     maxLength={9}
                   />
-                  {loadingCep && (
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    {loadingCep ? (
                       <Loader2 className="w-4 h-4 text-amber-500 animate-spin" />
-                    </div>
-                  )}
+                    ) : cepValid === true ? (
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                        <Check className="w-5 h-5 text-green-500" />
+                      </motion.div>
+                    ) : cepValid === false ? (
+                      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                        <X className="w-5 h-5 text-red-500" />
+                      </motion.div>
+                    ) : null}
+                  </div>
                 </div>
+
+                {/* Estado e Cidade - Read-only, só aparecem após CEP válido */}
+                <AnimatePresence>
+                  {cepValid === true && selectedState && selectedCity && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      {/* Estado - Read-only */}
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          value={states.find(s => s.sigla === selectedState)?.nome || selectedState}
+                          readOnly
+                          className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-green-50/50 border-2 border-green-500 rounded-xl text-gray-700 cursor-not-allowed"
+                          disabled
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <Check className="w-4 h-4 text-green-500" />
+                        </div>
+                      </div>
+
+                      {/* Cidade - Read-only */}
+                      <div className="relative">
+                        <Input
+                          type="text"
+                          value={selectedCity}
+                          readOnly
+                          className="w-full h-12 sm:h-14 px-4 text-sm sm:text-base bg-green-50/50 border-2 border-green-500 rounded-xl text-gray-700 cursor-not-allowed"
+                          disabled
+                        />
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                          <Check className="w-4 h-4 text-green-500" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
                 {/* Endereço (Rua) */}
                 <div className="relative">
