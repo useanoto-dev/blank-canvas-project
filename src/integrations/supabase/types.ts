@@ -14,7 +14,207 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      stores: {
+        Row: {
+          about_us: string | null
+          address: string | null
+          address_number: string | null
+          banner_url: string | null
+          cep: string | null
+          city: string | null
+          close_hour: number | null
+          created_at: string
+          delivery_fee: number | null
+          estimated_delivery_time: number | null
+          estimated_prep_time: number | null
+          font_family: string | null
+          google_maps_link: string | null
+          id: string
+          instagram: string | null
+          is_active: boolean | null
+          is_open_override: boolean | null
+          logo_url: string | null
+          min_order_value: number | null
+          name: string
+          neighborhood: string | null
+          open_hour: number | null
+          owner_id: string
+          phone: string | null
+          pix_key: string | null
+          primary_color: string | null
+          print_footer_message: string | null
+          printer_width: string | null
+          printnode_api_key: string | null
+          printnode_auto_print: boolean | null
+          printnode_max_retries: number | null
+          printnode_printer_id: string | null
+          schedule: Json | null
+          secondary_color: string | null
+          sidebar_color: string | null
+          slug: string | null
+          state: string | null
+          uazapi_instance_name: string | null
+          uazapi_instance_token: string | null
+          updated_at: string
+          use_comanda_mode: boolean | null
+          whatsapp_name: string | null
+          whatsapp_number: string | null
+          whatsapp_phone: string | null
+          whatsapp_status: string | null
+        }
+        Insert: {
+          about_us?: string | null
+          address?: string | null
+          address_number?: string | null
+          banner_url?: string | null
+          cep?: string | null
+          city?: string | null
+          close_hour?: number | null
+          created_at?: string
+          delivery_fee?: number | null
+          estimated_delivery_time?: number | null
+          estimated_prep_time?: number | null
+          font_family?: string | null
+          google_maps_link?: string | null
+          id?: string
+          instagram?: string | null
+          is_active?: boolean | null
+          is_open_override?: boolean | null
+          logo_url?: string | null
+          min_order_value?: number | null
+          name: string
+          neighborhood?: string | null
+          open_hour?: number | null
+          owner_id: string
+          phone?: string | null
+          pix_key?: string | null
+          primary_color?: string | null
+          print_footer_message?: string | null
+          printer_width?: string | null
+          printnode_api_key?: string | null
+          printnode_auto_print?: boolean | null
+          printnode_max_retries?: number | null
+          printnode_printer_id?: string | null
+          schedule?: Json | null
+          secondary_color?: string | null
+          sidebar_color?: string | null
+          slug?: string | null
+          state?: string | null
+          uazapi_instance_name?: string | null
+          uazapi_instance_token?: string | null
+          updated_at?: string
+          use_comanda_mode?: boolean | null
+          whatsapp_name?: string | null
+          whatsapp_number?: string | null
+          whatsapp_phone?: string | null
+          whatsapp_status?: string | null
+        }
+        Update: {
+          about_us?: string | null
+          address?: string | null
+          address_number?: string | null
+          banner_url?: string | null
+          cep?: string | null
+          city?: string | null
+          close_hour?: number | null
+          created_at?: string
+          delivery_fee?: number | null
+          estimated_delivery_time?: number | null
+          estimated_prep_time?: number | null
+          font_family?: string | null
+          google_maps_link?: string | null
+          id?: string
+          instagram?: string | null
+          is_active?: boolean | null
+          is_open_override?: boolean | null
+          logo_url?: string | null
+          min_order_value?: number | null
+          name?: string
+          neighborhood?: string | null
+          open_hour?: number | null
+          owner_id?: string
+          phone?: string | null
+          pix_key?: string | null
+          primary_color?: string | null
+          print_footer_message?: string | null
+          printer_width?: string | null
+          printnode_api_key?: string | null
+          printnode_auto_print?: boolean | null
+          printnode_max_retries?: number | null
+          printnode_printer_id?: string | null
+          schedule?: Json | null
+          secondary_color?: string | null
+          sidebar_color?: string | null
+          slug?: string | null
+          state?: string | null
+          uazapi_instance_name?: string | null
+          uazapi_instance_token?: string | null
+          updated_at?: string
+          use_comanda_mode?: boolean | null
+          whatsapp_name?: string | null
+          whatsapp_number?: string | null
+          whatsapp_phone?: string | null
+          whatsapp_status?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          store_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: string
+          store_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          store_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
