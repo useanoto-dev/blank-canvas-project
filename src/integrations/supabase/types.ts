@@ -173,6 +173,39 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon_usages: {
+        Row: {
+          coupon_id: string
+          created_at: string
+          customer_phone: string | null
+          discount_applied: number | null
+          id: string
+          order_id: string | null
+          store_id: string
+          used_at: string
+        }
+        Insert: {
+          coupon_id: string
+          created_at?: string
+          customer_phone?: string | null
+          discount_applied?: number | null
+          id?: string
+          order_id?: string | null
+          store_id: string
+          used_at?: string
+        }
+        Update: {
+          coupon_id?: string
+          created_at?: string
+          customer_phone?: string | null
+          discount_applied?: number | null
+          id?: string
+          order_id?: string | null
+          store_id?: string
+          used_at?: string
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           code: string
@@ -215,9 +248,58 @@ export type Database = {
         }
         Relationships: []
       }
+      customers: {
+        Row: {
+          cpf: string | null
+          created_at: string
+          email: string | null
+          id: string
+          last_order_at: string | null
+          loyalty_points: number | null
+          name: string
+          notes: string | null
+          phone: string
+          store_id: string
+          total_orders: number | null
+          total_spent: number | null
+          updated_at: string
+        }
+        Insert: {
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_order_at?: string | null
+          loyalty_points?: number | null
+          name: string
+          notes?: string | null
+          phone: string
+          store_id: string
+          total_orders?: number | null
+          total_spent?: number | null
+          updated_at?: string
+        }
+        Update: {
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_order_at?: string | null
+          loyalty_points?: number | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          store_id?: string
+          total_orders?: number | null
+          total_spent?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       delivery_areas: {
         Row: {
           created_at: string
+          display_order: number | null
           estimated_time: number | null
           fee: number | null
           id: string
@@ -228,6 +310,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          display_order?: number | null
           estimated_time?: number | null
           fee?: number | null
           id?: string
@@ -238,6 +321,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          display_order?: number | null
           estimated_time?: number | null
           fee?: number | null
           id?: string
@@ -275,6 +359,39 @@ export type Database = {
           is_active?: boolean | null
           name?: string
           store_id?: string
+        }
+        Relationships: []
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          id: string
+          movement_type: string
+          product_id: string
+          quantity: number
+          reason: string | null
+          store_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          movement_type: string
+          product_id: string
+          quantity: number
+          reason?: string | null
+          store_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          movement_type?: string
+          product_id?: string
+          quantity?: number
+          reason?: string | null
+          store_id?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -324,6 +441,42 @@ export type Database = {
           price?: number
           promotional_price?: number | null
           stock_quantity?: number | null
+          store_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      loyalty_settings: {
+        Row: {
+          created_at: string
+          id: string
+          is_enabled: boolean | null
+          min_order_for_points: number | null
+          points_per_real: number | null
+          points_per_redemption: number | null
+          redemption_value: number | null
+          store_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          min_order_for_points?: number | null
+          points_per_real?: number | null
+          points_per_redemption?: number | null
+          redemption_value?: number | null
+          store_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_enabled?: boolean | null
+          min_order_for_points?: number | null
+          points_per_real?: number | null
+          points_per_redemption?: number | null
+          redemption_value?: number | null
           store_id?: string
           updated_at?: string
         }
@@ -430,6 +583,171 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           name?: string
+          store_id?: string
+        }
+        Relationships: []
+      }
+      pizza_doughs: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          price: number | null
+          store_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          price?: number | null
+          store_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price?: number | null
+          store_id?: string
+        }
+        Relationships: []
+      }
+      pizza_edges: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          name: string
+          price: number | null
+          store_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          price?: number | null
+          store_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          price?: number | null
+          store_id?: string
+        }
+        Relationships: []
+      }
+      pizza_flavors: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number | null
+          id: string
+          image_url: string | null
+          ingredients: string | null
+          is_active: boolean | null
+          is_premium: boolean | null
+          name: string
+          store_id: string
+          surcharge: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string | null
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          name: string
+          store_id: string
+          surcharge?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          image_url?: string | null
+          ingredients?: string | null
+          is_active?: boolean | null
+          is_premium?: boolean | null
+          name?: string
+          store_id?: string
+          surcharge?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pizza_size_prices: {
+        Row: {
+          created_at: string
+          flavor_id: string | null
+          id: string
+          price: number
+          size_id: string
+          store_id: string
+        }
+        Insert: {
+          created_at?: string
+          flavor_id?: string | null
+          id?: string
+          price?: number
+          size_id: string
+          store_id: string
+        }
+        Update: {
+          created_at?: string
+          flavor_id?: string | null
+          id?: string
+          price?: number
+          size_id?: string
+          store_id?: string
+        }
+        Relationships: []
+      }
+      pizza_sizes: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          max_flavors: number | null
+          name: string
+          slices: number | null
+          store_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          max_flavors?: number | null
+          name: string
+          slices?: number | null
+          store_id: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          max_flavors?: number | null
+          name?: string
+          slices?: number | null
           store_id?: string
         }
         Relationships: []
@@ -761,6 +1079,129 @@ export type Database = {
           role?: string
           store_id?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      whatsapp_campaign_recipients: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          customer_id: string | null
+          customer_name: string | null
+          customer_phone: string
+          error_message: string | null
+          id: string
+          sent_at: string | null
+          status: string | null
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          customer_phone: string
+          error_message?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          customer_id?: string | null
+          customer_name?: string | null
+          customer_phone?: string
+          error_message?: string | null
+          id?: string
+          sent_at?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      whatsapp_campaigns: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          delivered_count: number | null
+          failed_count: number | null
+          id: string
+          message_content: string
+          name: string
+          scheduled_at: string | null
+          sent_count: number | null
+          started_at: string | null
+          status: string | null
+          store_id: string
+          total_recipients: number | null
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          delivered_count?: number | null
+          failed_count?: number | null
+          id?: string
+          message_content: string
+          name: string
+          scheduled_at?: string | null
+          sent_count?: number | null
+          started_at?: string | null
+          status?: string | null
+          store_id: string
+          total_recipients?: number | null
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          delivered_count?: number | null
+          failed_count?: number | null
+          id?: string
+          message_content?: string
+          name?: string
+          scheduled_at?: string | null
+          sent_count?: number | null
+          started_at?: string | null
+          status?: string | null
+          store_id?: string
+          total_recipients?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      whatsapp_messages: {
+        Row: {
+          created_at: string
+          direction: string | null
+          id: string
+          media_url: string | null
+          message: string | null
+          order_id: string | null
+          phone: string
+          status: string | null
+          store_id: string
+        }
+        Insert: {
+          created_at?: string
+          direction?: string | null
+          id?: string
+          media_url?: string | null
+          message?: string | null
+          order_id?: string | null
+          phone: string
+          status?: string | null
+          store_id: string
+        }
+        Update: {
+          created_at?: string
+          direction?: string | null
+          id?: string
+          media_url?: string | null
+          message?: string | null
+          order_id?: string | null
+          phone?: string
+          status?: string | null
+          store_id?: string
         }
         Relationships: []
       }
