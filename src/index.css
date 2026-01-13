@@ -128,14 +128,15 @@
     /* Surface for cards */
     --surface: 224 15% 11%;
     
-    /* Sidebar dark mode - Dark amber tint */
-    --sidebar-bg: 30 20% 12%;
-    --sidebar-border: 30 15% 18%;
-    --sidebar-hover: 30 20% 16%;
-    --sidebar-active: 30 25% 18%;
-    --sidebar-foreground: 45 20% 92%;
-    --sidebar-foreground-muted: 45 10% 60%;
-    --sidebar-accent: 45 100% 55%;
+    /* Sidebar dark mode - Vibrant Amber/Yellow */
+    --sidebar-bg: 40 96% 52%;
+    --sidebar-bg-end: 43 96% 48%;
+    --sidebar-border: 40 90% 45%;
+    --sidebar-hover: 40 96% 58%;
+    --sidebar-active: 40 100% 62%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-foreground-muted: 30 20% 25%;
+    --sidebar-accent: 40 100% 40%;
     
     /* Admin specific - Green accent in dark */
     --admin-accent: 152 80% 50%;
