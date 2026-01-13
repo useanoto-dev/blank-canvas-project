@@ -117,6 +117,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
   const [storeName, setStoreName] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
+  const [storeAddress, setStoreAddress] = useState("");
   const [stateSearch, setStateSearch] = useState("");
   const [citySearch, setCitySearch] = useState("");
   const [showStateDropdown, setShowStateDropdown] = useState(false);
@@ -149,6 +150,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
     storeName: false,
     state: false,
     city: false,
+    address: false,
     phone: false,
     email: false,
     password: false,
@@ -185,6 +187,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
       storeName: true,
       state: true,
       city: true,
+      address: true,
       phone: true,
       email: true,
       password: true,
@@ -245,6 +248,7 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
             phone: removeMask(phone),
             state: selectedState,
             city: selectedCity,
+            store_address: storeAddress,
           },
         },
       });
@@ -528,6 +532,22 @@ export default function SignupModal({ isOpen, onClose, onSwitchToLogin }: Signup
                       )}
                     </AnimatePresence>
                   </div>
+                </div>
+
+                {/* Endereço */}
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                  </div>
+                  <Input
+                    type="text"
+                    placeholder="Endereço completo (Rua, número, bairro)"
+                    value={storeAddress}
+                    onChange={(e) => setStoreAddress(e.target.value)}
+                    onBlur={() => handleBlur("address")}
+                    className="w-full h-12 sm:h-14 pl-10 pr-4 text-sm sm:text-base bg-gray-50 border-2 rounded-xl transition-all duration-200 focus:outline-none focus:bg-white border-gray-200 focus:border-amber-400"
+                    disabled={loading}
+                  />
                 </div>
 
                 {/* Celular */}
